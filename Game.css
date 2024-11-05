@@ -1,0 +1,35 @@
+.matrix {
+    display: grid;
+    box-sizing: border-box;
+    background-color: blue;
+    grid-template-columns: repeat(30, 1fr); /* 30 kolona */
+    grid-template-rows: repeat(30, 1fr); /* 30 redova */
+    /* gap: 2px; Razmak između div-ova */
+    width: 100%; /* Uzimamo 100% širine roditelja */
+    height: 100%; /* Uzimamo 100% visine roditelja */
+    max-width: 50vw; /* Maksimalna širina matrice 90% širine ekrana */
+    /* max-height: 70vh; Maksimalna visina matrice 90% visine ekrana */
+    aspect-ratio: 1;
+    margin: auto;
+    border: 2px solid black; /* Opcionalno, za vizuelni okvir */
+  }
+  
+  /* CSS za svaki div unutar matrice */
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border: 1px solid #ccc; */
+    /* border-left: 2px solid black; */
+    background-color: #f0f0f0; /* Boja pozadine svakog div-a */
+    box-sizing: border-box;
+    /* font-size: 14px; */
+    /* text-align: center; */
+    background-color: rgb(159, 137, 78);
+    aspect-ratio: 1; /* Garantuje da je svaki div kvadratnog oblika */
+    width: 100%; /* Da bi div zauzeo celu raspoloživu širinu unutar grid ćelije */
+    height: 100%; /* Da bi div zauzeo celu raspoloživu visinu unutar grid ćelije */
+  }
+  .canva{
+    margin-left: 25%;    
+  }
