@@ -6,25 +6,24 @@ export class Game2{
         this.mat 
         this.cont
         this.cells = []
+        this.islands = []
     }
 
     begin(){
         this.createMatrix(document.body)
         this.addBorders()
+        this.test()
+        console.log(this.islands[2])
     }
-
-    
-
-
     createMatrix(host) {
-        this.cont = document.createElement('div') // Referenca na glavni div
-        this.cont.classList.add('matrix'); // Dodavanje klase za CSS stilizaciju
+        this.cont = document.createElement('div') 
+        this.cont.classList.add('matrix'); 
         host.appendChild(this.cont)
 
         for (let i = 0; i < 30; i++) {
             this.cells[i] = []
             for (let j = 0; j < 30; j++) {
-                const cell = document.createElement('div'); // Kreiraj novi div za svaku ćeliju
+                const cell = document.createElement('div'); 
                 if(this.matrix[i][j]==0){
                     cell.style.backgroundColor="blue"
                     cell.water = true;
@@ -32,18 +31,109 @@ export class Game2{
                     cell.style.backgroundColor="green"
                 }
                 this.cells[i].push(cell)
-                cell.classList.add('cell'); // Dodaj klasu za stilizaciju
+                cell.classList.add('cell');
                 if(!cell.water){
                     cell.style.border = '1px solid black'
                 }
                 // cell.textContent = i * 30 + j + 1; // Popuni div sa brojem (1, 2, ..., 900)
-                this.cont.appendChild(cell); // Dodaj div u glavni kontejner
+                this.cont.appendChild(cell); 
+                cell.i = i
+                cell.j = j
+                // self = this;
+                if(!cell.water){
+                    cell.addEventListener('mouseenter', (event) => {
+                        // const islandNumber = event.target.getAttribute('islandNumber');
+                        // console.log(event.target.islandNumber);
+                        this.lift(event.target.islandNumber)
+                    })
+                    cell.addEventListener('mouseleave', (event) => {
+                        // const islandNumber = event.target.getAttribute('islandNumber');
+                        // console.log(event.target.islandNumber);
+                        this.lower(event.target.islandNumber)
+                    })
+                }
+                cell.classList.add('tet')
+                //cell.addEventListener('mouseenter', this.test.bind(this))
+
 
             }
         }
-        
-        // this.cells[0].style.borderRight = '1px solid black';
-        // this.cells[1].style.borderLeft = '1px solid black'
+    }
+
+    lift(val){
+        console.log('lift')
+        this.islands[val].forEach(e=>{
+            // e.style.backgroundColor='purple'
+            e.classList.add('test')
+            e.classList.remove('tet')
+        })
+    }
+
+    lower(val){
+        this.islands[val].forEach(e=>{
+            // e.style.backgroundColor='purple'
+            e.classList.remove('test')
+            e.classList.add('tet')
+
+        })
+    }
+
+
+    test(){
+        for(let i = 0; i < 30; i ++){
+            for(let j = 0; j < 30; j++){
+                if(!this.cells[i][j].visited && !this.cells[i][j].water){
+                    this.test2(i, j);
+                }
+            }
+        }
+    }
+
+
+    test2(i, j){
+        console.log('ss')
+        this.islands[this.islands.length] = [] //
+        this.islands[this.islands.length-1].push(this.cells[i][j]);
+        this.cells[i][j].islandNumber = this.islands.length-1
+
+        let queue = []
+        queue.push(this.cells[i][j])
+
+        while(queue.length!=0){
+
+            let current = queue.shift()
+            let i = current.i
+            let j = current.j
+            current.visited = true;
+
+            // current.style.backgroundColor='red'
+
+            if(this.cells[i-1]?.[j] && !this.cells[i-1][j].visited && !this.cells[i-1][j].water){
+                this.cells[i-1][j].visited = true;
+                this.islands[this.islands.length-1].push(this.cells[i-1][j]);
+                this.cells[i-1][j].islandNumber = this.islands.length-1
+                queue.push(this.cells[i-1][j])
+            }
+            if(this.cells[i][j+1] && !this.cells[i][j+1].visited && !this.cells[i][j+1].water){
+                this.cells[i][j+1].visited = true;
+                this.islands[this.islands.length-1].push(this.cells[i][j+1]);
+                this.cells[i][j+1].islandNumber = this.islands.length-1
+                queue.push(this.cells[i][j+1])
+
+            }
+            if(this.cells[i+1]?.[j] && !this.cells[i+1][j].visited && !this.cells[i+1][j].water){
+                this.cells[i+1][j].visited = true;
+                this.islands[this.islands.length-1].push(this.cells[i+1][j]);
+                this.cells[i+1][j].islandNumber = this.islands.length-1
+                queue.push(this.cells[i+1][j])
+            }
+            if(this.cells[i][j-1] && !this.cells[i][j-1].visited && !this.cells[i][j-1].water){
+                this.cells[i][j-1].visited = true;
+                this.islands[this.islands.length-1].push(this.cells[i][j-1]);
+                this.cells[i][j-1].islandNumber = this.islands.length-1
+                queue.push(this.cells[i][j-1])
+            }
+        }
 
     }
 
@@ -90,7 +180,23 @@ export class Game2{
 
                 let color = this.getColorBasedOnHeight(this.matrix[i][j])
                 this.cells[i][j].style.backgroundColor = color;
-                console.log(this.matrix[i][j])
+
+                //DODAVANJE SLICICA
+                if(this.matrix[i][j]<290 && this.matrix[i][j]>0){
+                    if(Math.random()<.02)
+                    this.cells[i][j].innerHTML='🏠'
+                }
+                if(this.matrix[i][j]>=290 && this.matrix[i][j]<500){
+                    if(Math.random()<.02)
+                        this.cells[i][j].innerHTML='🌳'
+                }
+                if(this.matrix[i][j]>=500 && this.matrix[i][j]<750){
+                    if(Math.random()<.02)
+                        this.cells[i][j].innerHTML='🌲'
+                }
+
+
+                // console.log(this.matrix[i][j])
 
             }
 
@@ -104,31 +210,19 @@ export class Game2{
           return 'blue'; // Voda (plava)
         }
       
-        // Ako je visina u opsegu od 0 do 250
         if (height <= 280) {
-          let greenIntensity = Math.floor(255 * (height / 250)); // Od svetlo zelene do tamno zelene
-          //return `rgb(0, ${greenIntensity}, 0)`; // Zelena
           return 'rgb(0, 230, 0)'
         }
       
-        // Ako je visina u opsegu od 250 do 500
         else if (height <= 500) {
-          let greenIntensity = Math.floor(255 * ((500 - height) / 250)); // Od tamno zelene do svetlo zelene
-        //   return `rgb(0, ${greenIntensity}, 0)`; // Zelena
         return 'rgb(0, 200, 0)'
         }
       
-        // Ako je visina u opsegu od 500 do 750
         else if (height <= 750) {
-          let brownIntensity = Math.floor(255 * ((750 - height) / 250)); // Od svetlo braon do tamno braon
-        //   return `rgb(${brownIntensity}, ${brownIntensity}, 0)`; // Braon
-        // return 'lightbrown'
         return 'rgb(192, 168, 92)'
 
         }
       
-        // Ako je visina u opsegu od 750 do 1000
-        //return 'rgb(139, 69, 19)'; // Tamno braon
         return 'rgb(159, 137, 78)'
       }
 
