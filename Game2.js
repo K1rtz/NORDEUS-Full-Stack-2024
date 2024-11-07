@@ -7,13 +7,129 @@ export class Game2{
         this.cont
         this.cells = []
         this.islands = []
+        this.addEventListeners();
+
+        this.duckInfo = {
+            x: 0,
+            y: 0,
+            currentDirection: 1
+
+        }
+
+    }
+    addEventListeners(){
+        document.addEventListener('keydown', (event)=>{
+            if(event.key == 'ArrowRight'){
+                this.moveDuck([0, 1]);
+            }
+            else if(event.key == 'ArrowLeft'){
+                this.moveDuck([0,-1])
+            }
+            else if(event.key == 'ArrowDown'){
+                this.moveDuck([1,0])
+            }
+            else if(event.key == 'ArrowUp'){
+                this.moveDuck([-1,0])
+            }
+            else if(event.key == ' '){
+                this.layEgg()
+            }
+        })
+
+    }
+
+    layEgg(){
+        let x = this.duckInfo.x
+        let y = this.duckInfo.y
+        
+        let i;
+        // do{
+        //     i = Math.random() > 0.5 ? -1 : 1
+        //     console.log(i)
+        // }
+        // while(!this.moveDuck([0, i]))
+        const islandElement = this.islands[this.cells[x][y].islandNumber][0];
+
+        if(islandElement.getAttribute('hasEgg') != 'true'){
+
+            this.islands[this.cells[x][y].islandNumber][0].setAttribute('hasEgg', 'true');
+            if(!this.moveDuck([0, this.duckInfo.currentDirection]))
+                this.moveDuck([0, this.duckInfo.currentDirection -2])
+            
+            this.cells[x][y].childNodes[0].innerHTML='🥚'
+            
+            console.log(this.islands[this.cells[x][y].islandNumber][0].getAttribute('hasEgg') != 'true')
+            console.log(this.islands[this.cells[x][y].islandNumber][0].getAttribute('hasEgg') == 'true')
+        }
+
+
+        
+    }
+
+    moveDuck(val){
+        
+
+        let x = this.duckInfo.x
+        let y = this.duckInfo.y
+        if(this.cells[x+val[0]]?.[y+val[1]]){
+            
+            //Moving the duck and giving it right orientation
+            this.duckInfo.x = x+val[0];
+            this.duckInfo.y = y+val[1];
+            //provera da li ce ugaziti u egg da ga obrise
+            if(this.cells[x+val[0]][y+val[1]].childNodes[0].innerHTML=='🥚'){
+                this.islands[this.cells[x+val[0]][y+val[1]].islandNumber][0].setAttribute('hasEgg', 'false');
+            }
+            //dalje
+            // if(this.cells[x][y].childNodes[0].innerHTML!='🥚')
+            this.cells[x][y].childNodes[0].innerHTML=''
+            this.cells[x+val[0]][y+val[1]].childNodes[0].innerHTML='🦆'
+            
+            if(val[1] == 1){
+                this.cells[x+val[0]][y+val[1]].childNodes[0].classList.add('spa')
+                this.duckInfo.currentDirection = 1;
+            }
+            else if(val[1] == -1){
+                this.cells[x+val[0]][y+val[1]].childNodes[0].classList.remove('spa')
+                this.duckInfo.currentDirection = -1;
+            }
+            if(val[0] != 0){
+                if(this.duckInfo.currentDirection == 1)
+                    this.cells[x+val[0]][y+val[1]].childNodes[0].classList.add('spa')
+                else
+                    this.cells[x+val[0]][y+val[1]].childNodes[0].classList.remove('spa')
+            }
+            console.log(this.duckInfo.currentDirection)
+
+            //Lighting up islands once they are entered
+            if(!this.cells[x+val[0]][y+val[1]].water){
+                this.lift(this.cells[x+val[0]][y+val[1]].islandNumber)
+            }
+            else if(!this.cells[x][y].water && this.islands[this.cells[x][y].islandNumber][0].getAttribute('hasEgg') == 'false'){ //&&this.islands[this.cells[x+val[0]][y+val[1]].islandNumber][0].getAttribute('hasEgg') != 'true'){
+                this.lower(this.cells[x][y].islandNumber)
+                console.log(this.islands[this.cells[x][y].islandNumber][0].getAttribute('hasEgg'))
+            }
+
+
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    addEggPropertyOnIslands(){
+        this.islands.forEach(e=>{
+            e[0].setAttribute('hasEgg', 'false')
+        })
     }
 
     begin(){
         this.createMatrix(document.body)
         this.addBorders()
         this.test()
-        console.log(this.islands[2])
+        this.addEggPropertyOnIslands()
+        // console.log(this.islands[2])
     }
     createMatrix(host) {
         this.cont = document.createElement('div') 
@@ -40,19 +156,27 @@ export class Game2{
                 cell.i = i
                 cell.j = j
                 // self = this;
-                if(!cell.water){
-                    cell.addEventListener('mouseenter', (event) => {
-                        // const islandNumber = event.target.getAttribute('islandNumber');
-                        // console.log(event.target.islandNumber);
-                        this.lift(event.target.islandNumber)
-                    })
-                    cell.addEventListener('mouseleave', (event) => {
-                        // const islandNumber = event.target.getAttribute('islandNumber');
-                        // console.log(event.target.islandNumber);
-                        this.lower(event.target.islandNumber)
-                    })
-                }
+                //MOUSE DETECTION
+                // if(!cell.water){
+                //     cell.addEventListener('mouseenter', (event) => {
+                //         // const islandNumber = event.target.getAttribute('islandNumber');
+                //         // console.log(event.target.islandNumber);
+                //         this.lift(event.target.islandNumber)
+                //     })
+                //     cell.addEventListener('mouseleave', (event) => {
+                //         // const islandNumber = event.target.getAttribute('islandNumber');
+                //         // console.log(event.target.islandNumber);
+                //         this.lower(event.target.islandNumber)
+                //     })
+                // }
                 cell.classList.add('tet')
+                let x = document.createElement('span')
+                x.classList.add('spa')
+                cell.appendChild(x);
+                if(i==0 && j == 0){
+                    x.innerHTML = '🦆'
+                }
+
                 //cell.addEventListener('mouseenter', this.test.bind(this))
 
 
