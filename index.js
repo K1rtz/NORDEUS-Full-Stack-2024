@@ -1,5 +1,6 @@
 import {Game} from './Game.js'
 import {Game2} from './Game2.js'
+import { FullGame } from './FullGame.js';
 // fetch('https://jobfair.nordeus.com/jf24-fullstack-challenge/test')
 // .then(res => res.json())
 // .then(data => console.log(data))
@@ -32,8 +33,10 @@ async function fetchMatrix() {
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }
+
 }
-fetchMatrix()
+//fetchMatrix()
 // let mat = fetchMatrix();
 // console.log(mat)
-
+const fg = new FullGame()
+fg.drawEverything()

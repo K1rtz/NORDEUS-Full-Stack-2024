@@ -124,8 +124,8 @@ export class Game2{
         })
     }
 
-    begin(){
-        this.createMatrix(document.body)
+    begin(host){
+        this.createMatrix(host)
         this.addBorders()
         this.test()
         this.addEggPropertyOnIslands()

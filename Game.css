@@ -2,7 +2,7 @@ body{
   background-color: burlywood;
 }
 .canva{
-  margin-left: 25%;    
+  /* margin-left: 25%;     */
 }
 
 .matrix {
@@ -17,8 +17,9 @@ body{
   max-width: 50vw; 
   gap:0;
   aspect-ratio: 1;
-  margin: auto;
-  border: 2px solid black; 
+  max-height: 900px;
+  /* margin: auto; */
+  /* border: 2px solid black;  */
   /* filter: brightness(0.2); */
   /* opacity: .2; */
 
@@ -29,14 +30,21 @@ body{
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  aspect-ratio: 1; 
+  /* aspect-ratio: 1;  */
   width: 100%; 
   height: 100%; 
   /* max-width: 21.2px; */
   /* max-height: 21.2px; */
-  line-height: 1;
+  /* line-height: 1; */
   /* transition: transform 1s; */
   /* position: relative; */
+  /* font-size: 70%; */
+  font-size: clamp(5px, 1.1vw, 30px); 
+}
+.cell span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 .tet{
   /* opacity: .8; */
@@ -70,12 +78,36 @@ body{
 /* ...FORM> */
 
 .mainCont{
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: row;
-}
-.formWrapper{
+  /* margin: auto; */
+  margin-left: 10%;
+  /* background-color: rgb(99, 84, 41); */
+  /* border: 10px solid rgb(99, 84, 41); */
+  max-height: 900px;
 
 }
+.formWrapper{
+  box-sizing: border-box;
+  background-color: rgb(62, 51, 27);
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  /* width: 100%; */
+  display: flex;              /* Flexbox za centriranje */
+  justify-content: center;    /* Centriranje horizontalno */
+  align-items: center; 
+  padding: 20px;
+}
 .form{
+  box-sizing: border-box;
+  background-color: rgb(51, 108, 85);
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  /* width: 350px; */
+  
 
 }
