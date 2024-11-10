@@ -4,16 +4,29 @@ export class FullGame{
 
 
     constructor(){
+        this.fullDisplay
         this.cont;
         this.matrix 
     }
     
     drawEverything(){
+
+        this.fullDisplay = document.createElement('div')
+        this.fullDisplay.classList.add('fullDisplay')
+        document.body.appendChild(this.fullDisplay)
+
+
+
         this.cont = document.createElement('div')
         this.cont.classList.add('mainCont')
-        document.body.appendChild(this.cont)
+
+        
+
+        this.fullDisplay.appendChild(this.cont)
 
         this.drawForm(this.cont)
+        this.drawLevels()
+
         self = this
         this.fetchMatrix().then(()=>{
             const gam = new Game2(this.cont)
@@ -24,6 +37,8 @@ export class FullGame{
     
     drawForm(host){
         //GAME FORM 
+
+
         let formWrapper = document.createElement('div')
         formWrapper.classList.add('formWrapper')
         host.appendChild(formWrapper)
@@ -41,8 +56,8 @@ export class FullGame{
         gameDesc.classList.add('gameDesc')
         gameDescWrapper.appendChild(gameDesc)
 
-        gameDesc.innerHTML ="The goal of the game is to pick 3 islands with highest average altitude and lay eggs on them so the chances of offspring surviving high floods are highest :) To move the duck use arrow buttons and to lay eggs use spacebar. For the information on each tiles possible altitude consult the legend below"
-
+        // gameDesc.innerHTML ="The goal of the game is to pick 3 islands with highest average altitude and lay eggs on them so the chances of offspring surviving high floods are highest :) To move the duck use arrow buttons and to lay eggs use spacebar. For the information on each tiles possible altitude consult the legend below"
+        gameDesc.innerHTML = "ROAMING DUCK"
         //FORM LEGEND
         let gameLegendWrapper = document.createElement('div')
         gameLegendWrapper.classList.add('gameLegendWrapper')
@@ -87,31 +102,57 @@ export class FullGame{
         submitButton.innerHTML = "0/3 Eggs placed"
 
         //LEVELS
-        let levelsWrapper = document.createElement('div')
-        levelsWrapper.classList.add('levelsWrapper')
-        form.appendChild(levelsWrapper)
+        // let levelsWrapper = document.createElement('div')
+        // levelsWrapper.classList.add('levelsWrapper')
+        // form.appendChild(levelsWrapper)
 
-        let levelLabel = document.createElement('label')
-        levelLabel.classList.add('levelLabel')
-        levelLabel.innerHTML = "Levels"
-        levelsWrapper.appendChild(levelLabel)
+        // let levelLabel = document.createElement('label')
+        // levelLabel.classList.add('levelLabel')
+        // levelLabel.innerHTML = "Levels"
+        // levelsWrapper.appendChild(levelLabel)
 
-        let levels = document.createElement('div')
-        levels.classList.add('levels')
-        levelsWrapper.appendChild(levels)
+        // let levels = document.createElement('div')
+        // levels.classList.add('levels')
+        // levelsWrapper.appendChild(levels)
+
+        // let level;
+        // for(let i  = 1; i <= 12; i++){
+        //     level = document.createElement('div')
+        //     level.innerHTML = i
+        //     level.classList.add('level')
+        //     levels.appendChild(level)
+        // }
+
+
+
+        
+    }
+
+    drawLevels(){
+        let levelsFormWrapper = document.createElement('div')
+        levelsFormWrapper.classList.add('levelsFormWrapper')
+        this.fullDisplay.appendChild(levelsFormWrapper)
+
+        let levelsForm = document.createElement('div')
+        levelsForm.classList.add('levelsForm')
+        levelsFormWrapper.appendChild(levelsForm)
 
         let level;
         for(let i  = 1; i <= 12; i++){
             level = document.createElement('div')
             level.innerHTML = i
             level.classList.add('level')
-            levels.appendChild(level)
+            levelsForm.appendChild(level)
         }
 
 
 
-        
     }
+
+
+
+
+
 
     async fetchMatrix() {
         const url = 'https://jobfair.nordeus.com/jf24-fullstack-challenge/test';
