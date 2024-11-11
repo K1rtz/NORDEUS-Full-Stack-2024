@@ -10,7 +10,60 @@ body{
   /* margin-left: 25%;     */
 }
 
+.matrixWrapper{
+  /* display: inline-flex; */
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.wildDiv{
+  top:40%;
+  left: 25%;
+  width: 50%;
+  height: 20%;
+  position: absolute;
+  z-index: 0;
+  box-sizing: border-box;
+  background-color: rgb(242, 3, 3);
+  border: 4px solid rgb(57, 28, 28);
+  border-radius: 25px;
+  opacity: 80%;
+
+  display: flex;
+  flex-direction: column;
+
+
+  /* height: 200px; */
+  /* width: 200px; */
+}
+.wildDivText{
+  font-weight: 600;
+  /* font-size: 28px; */
+  font-size: 2.2vw;
+  /* margin-top: 25px; */
+  margin-top: 7%;
+  align-self: center;
+}
+.wildDivButton{
+  font-weight: 500;
+  /* font-size: 22px; */
+  font-size: 1.6vw;
+  /* margin-top: 26px; */
+  margin-top: 5%;
+
+  border-radius: 10px;
+
+  padding: 5px 15px;
+  border: 3px solid black;
+  background-color: #c00000;
+  align-self: center;
+}
+
+
 .matrix {
+  position: relative;
+
   border-top: 15px solid var(--main-border);
   border-right: 15px solid var(--main-border);
   border-bottom: 15px solid var(--main-border);
@@ -36,9 +89,12 @@ body{
 }
 
 .cell {
-  display: flex;
+  display: flex; 
   align-items: center;
   justify-content: center;
+
+
+
   box-sizing: border-box;
   /* aspect-ratio: 1;  */
   width: 100%; 
@@ -85,7 +141,6 @@ body{
 .spa{
   transform: scaleX(-1);
 }
-
 
 
 
@@ -179,13 +234,24 @@ body{
   /* font-weight: 600; */
   /* font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; */
   font-family:cursive;
-  padding: 10px;
+  padding: 0px 2px 10px 2px;
+  /* background-color: rgb(0 172 0); */
+  
+  background-color: var(--main-border);
   /* border-bottom: 15px solid rgb(62, 51, 27); */
 }
 .gameDesc{
-  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  border-radius: 5px;
   padding: 5px;
-  background-color: rgb(19, 113, 82);
+  font-size: 24px;
+  
+  /* background-color: rgb(19, 113, 82); */
+  /* background-color: rgb(240 218 147); */
+  background-color: rgb(0 172 0);
+  /* background: repeating-linear-gradient(-45deg, #2c3e50, #2c3e50 10px, #16a085 10px, #16a085 20px); */
+  background: repeating-linear-gradient(-45deg, #27ae60, #27ae60 10px, #8e7e3d 10px, #8e7e3d 20px);
 
 }
 
@@ -215,8 +281,8 @@ body{
   box-sizing: border-box;
   border: 3px solid black;
   border-radius: 10px;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 22px;
 }
 .labelItem{
   padding-left: 15px;
@@ -235,10 +301,11 @@ body{
   /* align-content: center; */
 
 
+
 }
 
 .submitButton{
-  border: 2px solid black;
+  border: 4px solid green;
   font-weight: 550;
   font-size: 18px;
   /* background-color: rgb(51, 96, 16); */
@@ -283,4 +350,90 @@ body{
 }
 
 
+.lifeCount{
+  font-size: 22px;
+  margin-left: auto;
+  padding-top: 2%;
+  padding-right: 5%;
+}
 
+
+.avatarWrapper{
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.avatarLabel{
+
+  font-family:Impact, 'Arial Narrow Bold', sans-serif;
+  color: #2d1f12;
+  /* font-size: 600; */
+  font-size: 18px;
+  align-self: center;
+}
+
+
+.avatarForm{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 10px;
+  justify-content: space-evenly;
+  align-content: space-evenly;
+  justify-items: center;
+}
+
+
+.avatarButton{
+  font-size: 28px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  background-color: #ab8e71;
+  border-radius: 15%;
+}
+.avatarButton:hover {
+  /* border-color: #4CAF50; */
+  transform: scale(1.1);
+  box-shadow: 0 2px 10px rgb(255, 255, 255); /* Suptilna senka pri hover-u */
+
+}
+.avatarButton select{
+
+}
+
+.selectForm{
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.selectWrapper{
+  justify-content: center;
+  align-items: center;
+}
+.select1{
+  margin-top: 15px;
+  font-size: 16px;
+  font-family:Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  align-self: center;
+  width: 80%;
+  background-color: #ab8e71;  /* Pozadina */
+  border: 2px solid #ab8e71;  /* Granica */
+  padding: 10px;            /* Unutrašnje margine */
+  border-radius: 4px;      /* Zaobljeni uglovi */
+  font-size: 16px;         /* Veličina fonta */
+}
+option{
+  font-weight: 600;
+}
+/* select1::after { */
+  /* content: '▼';  Strelica kao simbol */
+  /* font-size: 18px; */
+  /* color: #333; */
+  /* position: absolute; */
+  /* right: 10px; */
+  /* top: 50%; */
+  /* transform: translateY(-50%); */
+  /* pointer-events: none;  Strelica ne ometa klik na select */
+/* } */

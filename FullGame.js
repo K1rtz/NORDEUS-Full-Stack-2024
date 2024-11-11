@@ -57,7 +57,70 @@ export class FullGame{
         gameDescWrapper.appendChild(gameDesc)
 
         // gameDesc.innerHTML ="The goal of the game is to pick 3 islands with highest average altitude and lay eggs on them so the chances of offspring surviving high floods are highest :) To move the duck use arrow buttons and to lay eggs use spacebar. For the information on each tiles possible altitude consult the legend below"
-        gameDesc.innerHTML = "ROAMING DUCK"
+        gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ 🖤"
+
+
+        // //Lifes
+        // let lifeCount = document.createElement('div')
+        // lifeCount.classList.add('lifeCount')
+        // lifeCount.innerHTML = 'would it be too much to keep the explanation here :investigateprime:'
+        // form.appendChild(lifeCount)
+
+        //AVATAR
+
+        let avatarWrapper = document.createElement('div')
+        avatarWrapper.classList.add('avatarWrapper')
+        form.appendChild(avatarWrapper)
+
+        let label = document.createElement('label')
+        label.innerHTML = "Pick your avatar"
+        label.classList.add('avatarLabel')
+        avatarWrapper.appendChild(label)
+
+
+        let avatarForm = document.createElement('div')
+        avatarForm.classList.add('avatarForm')
+        avatarWrapper.appendChild(avatarForm)
+
+        let avatars = ['🦆', '🦢', '🐦', '🦚', '🦅', '🦃']
+        avatars.forEach(e=>{
+            let avatar = document.createElement('button')
+            avatar.classList.add('avatarButton')
+            avatar.innerHTML = e
+            avatarForm.appendChild(avatar)
+            if(e == '🦚'){
+                avatar.classList.add('selected')
+            }
+        })
+
+        //SELEKT
+
+        let selectForm = document.createElement('div')
+        selectForm.classList.add('selectForm')
+        form.appendChild(selectForm)
+
+        label = document.createElement('label')
+        label.innerHTML = "Select difficulty"
+        label.classList.add('avatarLabel')
+        selectForm.appendChild(label)
+
+        // let selectWrapper = document.createElement('div')
+        // selectWrapper.classList.add('selectWrapper')
+
+
+        let select = document.createElement('select')
+        select.classList.add('select1')
+        let op
+        let options = ['Easy', 'Medium', 'Hard']
+        options.forEach((e,index)=>{
+            op = document.createElement('option')
+            op.textContent = options[index]
+            select.appendChild(op)
+        })
+        // selectWrapper.appendChild(select)
+        selectForm.appendChild(select)
+
+
         //FORM LEGEND
         let gameLegendWrapper = document.createElement('div')
         gameLegendWrapper.classList.add('gameLegendWrapper')
@@ -68,8 +131,8 @@ export class FullGame{
         gameLegendWrapper.appendChild(gameLegend)
 
         //OPCIJE
-        let colors = ['rgb(0, 230, 0)', 'rgb(0, 200, 0)', 'rgb(192, 168, 92)', 'rgb(159, 137, 78)', 'rgb(159, 137, 78)', 'rgb(159, 137, 78)']
-        let descs = ['0 - 280', '280 - 500', '500 - 750', '750 - 1000', 'test', 'test']
+        let colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)', 'rgb(222 218 210)', 'rgb(240, 240, 240)']
+        let descs = ['0 - 280', '280 - 500', '500 - 750', '750 - 1000', 'test', 'test', 'test']
 
         let legendItem;
         let colorItem

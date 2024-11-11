@@ -215,15 +215,19 @@ export class Game2{
 
     checkResult(){
         console.log(this.correctIslands)
+        console.log(this.selectedIslands)
         let gameResult = true;
-        this.correctIslands.forEach( e =>{
-            if(!this.selectedIslands.includes(e)){
-                gameResult = false;
-            }
-        })
+        // this.correctIslands.forEach( e =>{
+            // if(!this.selectedIslands.includes(e)){
+                // gameResult = false;
+            // }
+        // })
+        gameResult = this.correctIslands.every(e => this.selectedIslands.includes(e));
+
 
         this.islands.forEach(e=>{
             if(!this.correctIslands.includes(e[0].islandNumber)){
+
                 e.forEach(i=>{
                     i.classList.add('flood1')
                 })
@@ -238,7 +242,7 @@ export class Game2{
             console.log('Defeat!')
         }
 
-        this.floodIsland()
+        // this.floodIsland()
         setTimeout(()=>{
             this.resetGame()
         }, 3000)
@@ -280,10 +284,29 @@ export class Game2{
     }
 
     begin(){
+        //
+        let matrixWrapper = document.createElement('div')
+        matrixWrapper.classList.add('matrixWrapper')
+        this.host.appendChild(matrixWrapper)
+
+        let wildDiv = document.createElement('div')
+        wildDiv.classList.add('wildDiv')
+        matrixWrapper.appendChild(wildDiv)
+
+        let wildDivText = document.createElement('div')
+        wildDivText.classList.add('wildDivText')
+        wildDivText.innerHTML = "GAME OVER"
+        wildDiv.appendChild(wildDivText)
+
+        let wildDivButton = document.createElement('button')
+        wildDivButton.classList.add('wildDivButton')
+        wildDivButton.innerHTML = "Play Again"
+        wildDiv.appendChild(wildDivButton)
+
 
         this.cont = document.createElement('div') 
         this.cont.classList.add('matrix'); 
-        this.host.appendChild(this.cont)
+        matrixWrapper.appendChild(this.cont)
 
 
 
@@ -347,6 +370,7 @@ export class Game2{
                 // }
                 cell.classList.add('tet')
                 let x = document.createElement('span')
+                x.classList.add('span1')
                 x.classList.add('spa')
                 cell.appendChild(x);
                 if(i==0 && j == 0){
@@ -361,7 +385,7 @@ export class Game2{
     }
 
     lift(val){
-        console.log('lift')
+        // console.log('lift')
         this.islands[val].forEach(e=>{
             // e.style.backgroundColor='purple'
             e.classList.add('test')
@@ -522,20 +546,36 @@ export class Game2{
           return 'blue'; // Voda (plava)
         }
       
-        if (height <= 280) {
-          return 'rgb(0, 230, 0)'
+        if (height <= 350) {
+        //   return 'rgb(0, 230, 0)'
+          return 'rgb(0 246 0)'
         }
       
-        else if (height <= 500) {
-        return 'rgb(0, 200, 0)'
+        else if (height <= 450) {
+        // return 'rgb(0, 200, 0)'
+        return 'rgb(3 220 3)'
         }
+        else if (height <= 550) {
+            // return 'rgb(0, 200, 0)'
+            return 'rgb(20 206 20)'
+            }
       
-        else if (height <= 750) {
-        return 'rgb(192, 168, 92)'
+        else if (height <= 650) {
+        // return 'rgb(192, 168, 92)'
+        return 'rgb(253 221 120)'
+
+        }
+        else if(height <=750){
+            // return 'rgb(159, 137, 78)'
+            return 'rgb(233 198 105)'
+
+        }
+        else if(height <=880){
+            return 'rgb(222 218 210)'
 
         }
       
-        return 'rgb(159, 137, 78)'
+        return 'rgb(240, 240, 240)'
     }
 
 
