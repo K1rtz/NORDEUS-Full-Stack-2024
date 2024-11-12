@@ -1,9 +1,16 @@
 export class Game2{
 
 
-    constructor(host){
+    constructor(host, fullGame){
+        this.fullGame = fullGame
         this.host = host;
         this.matrix; //= matrix;
+
+        this.initialSpawn = true;
+
+        this.avatar = '🦆'
+
+        this.testa = 0;
         // this.mat 
         this.cont
         this.cells = []
@@ -22,6 +29,7 @@ export class Game2{
         }
 
     }
+
 
     
 
@@ -103,7 +111,7 @@ export class Game2{
     layEgg(){
         let x = this.duckInfo.x
         let y = this.duckInfo.y
-        
+        // console.log(this.fullGame.lives)
         let i;
         // do{
         //     i = Math.random() > 0.5 ? -1 : 1
@@ -155,19 +163,11 @@ export class Game2{
                 console.log(button)
             }
 
-            // if(this.cells[x+val[0]][y+val[1]].innerHTML=='🚢'){
-            //     console.log('EXIT')
-            //     if(this.selectedIslands.length==3){
-            //         this.cells[x][y].childNodes[0].innerHTML = ''
-            //         this.checkResult();
-            //         return true;
-            //     }
-            //     return true
-            // }
-            //dalje
+
             // if(this.cells[x][y].childNodes[0].innerHTML!='🥚')
             this.cells[x][y].childNodes[0].innerHTML=''
-            this.cells[x+val[0]][y+val[1]].childNodes[0].innerHTML='🦆'
+            // this.cells[x+val[0]][y+val[1]].childNodes[0].innerHTML='🦆'
+            this.cells[x+val[0]][y+val[1]].childNodes[0].innerHTML = this.avatar
             if(this.cells[x+val[0]][y+val[1]].innerHTML!='🚢'){
                 if(val[1] == 1){
                     
@@ -217,13 +217,16 @@ export class Game2{
         console.log(this.correctIslands)
         console.log(this.selectedIslands)
         let gameResult = true;
-        // this.correctIslands.forEach( e =>{
-            // if(!this.selectedIslands.includes(e)){
-                // gameResult = false;
-            // }
-        // })
-        gameResult = this.correctIslands.every(e => this.selectedIslands.includes(e));
 
+        gameResult = this.correctIslands.every(e => this.selectedIslands.includes(e));
+        let rightGuesses = 0;
+        
+        this.selectedIslands.forEach(e=>{
+            if(this.correctIslands.includes(e))
+                rightGuesses++;
+        })
+        
+        this.updateWildDiv(1, rightGuesses)
 
         this.islands.forEach(e=>{
             if(!this.correctIslands.includes(e[0].islandNumber)){
@@ -234,7 +237,20 @@ export class Game2{
             }
         })
 
+        console.log(rightGuesses)
+        
+        this.fullGame.currentLives -= (3-rightGuesses)
+        console.log(this.fullGame.currentLives)
 
+        if(this.fullGame.currentLives <= 0){
+            console.log('ITS OVER')
+            this.updateLevels(0)
+            this.updateWildDiv(0)
+        }else{
+            this.fullGame.currentLevel++
+        }
+
+        this.updateHearts()
 
         if(gameResult){
             console.log("Victory!")
@@ -242,17 +258,89 @@ export class Game2{
             console.log('Defeat!')
         }
 
-        // this.floodIsland()
-        setTimeout(()=>{
-            this.resetGame()
-        }, 3000)
+        console.log(this.host)
+
+    }  
+
+    updateLevels(){
+        console.log(this.fullGame.currentLevel)
+        console.log(this.fullGame)
+        let levelsForm = this.host.parentNode.querySelector('.levelsForm')
+        console.log(levelsForm)
+        levelsForm.childNodes[this.fullGame.currentLevel-1].style.backgroundColor = 'yellow'
+        levelsForm.childNodes[this.fullGame.currentLevel-1].style.border = '4px solid orange'
+    }
+
+    updateWildDiv(val, rightGuesses){
+        let wildDiv = this.host.querySelector('.wildDiv')
+        let wildDivText = this.host.querySelector('.wildDivText')
+        let wildDivText2 = this.host.querySelector('.wildDivText2')
+        let wildButton = this.host.querySelector('.wildDivButton')
+        
+        wildDiv.style.display='flex'
+        if(val == -1){
+            console.log('sed')
+            wildDiv.style.backgroundColor='#d9d29c'
+            wildDiv.style.border='4px solid rgb(57, 28, 28)'
+            wildDivText.innerHTML = "The Duck Game"
+
+            // wildDivText2.innerHTML = 'you ran out of lives :('
+            wildButton.style.backgroundColor='#ab8e71'
+            wildDivText2.style.display = 'none'
+            wildButton.innerHTML = 'Start'
+            wildButton.style.marginTop = '4%'
+        }
+        else if(val == 0){
+            console.log('sed')
+            wildDiv.style.backgroundColor='red'
+            wildDiv.style.border='4px solid rgb(57, 28, 28)'
+            wildDivText.innerHTML = "GAME OVER"
+
+            // wildDivText2.innerHTML = 'you ran out of lives :('
+            wildButton.style.backgroundColor='#c00000'
+            wildDivText2.style.display = 'none'
+            wildButton.innerHTML = 'Play Again'
+            wildButton.style.marginTop = '4%'
+        }else if (val == 1){
+
+
+
+            wildDiv.style.backgroundColor='orange'
+            wildDiv.style.border='4px solid rgb(57, 28, 28)'
+            wildDivText.innerHTML = "Level completed"
+
+            wildDivText2.innerHTML = `${rightGuesses} out of 3 eggs survived 🐤`
+            wildButton.style.backgroundColor='#e3d249'
+            wildDivText2.style.display = 'flex'
+            wildButton.innerHTML = 'next level'
+            wildButton.style.marginTop = '2%'
+
+        }
+        else if (val == 3){
+
+        }
+
 
     }
 
+    updateHearts(){
+        let hearts = this.host.querySelector('.gameDesc')
+        let srt = ''
+        for(let i = 0; i < this.fullGame.livesTotal; i++){
+            if(i < this.fullGame.currentLives){
+                srt += '❤️ '
+            }
+            else{
+                srt+= '🖤 '
+            }
+        }
+        console.log(srt)
+        hearts.innerHTML = srt;
+    }
     resetGame(){
 
         // this.cont.parentNode.removeChild(this.cont)
-
+        this.updateLevels()
         this.duckInfo.x = 0;
         this.duckInfo.y = 0;
         this.duckInfo.currentDirection = 1;
@@ -261,6 +349,9 @@ export class Game2{
         this.correctIslands.length = 0;
         this.islands.length = 0;
         this.cells.length = 0;
+
+        let wildDiv = this.host.querySelector('.wildDiv')
+        wildDiv.style.display = 'none'
 
         this.cont.replaceChildren()
 
@@ -283,25 +374,45 @@ export class Game2{
         })
     }
 
+    initializeNextLevel(){
+        // this.updateLevels()
+        this.resetGame()
+    }
+
+    //InitialShow
     begin(){
-        //
+        
+        
         let matrixWrapper = document.createElement('div')
         matrixWrapper.classList.add('matrixWrapper')
         this.host.appendChild(matrixWrapper)
-
+        
         let wildDiv = document.createElement('div')
         wildDiv.classList.add('wildDiv')
         matrixWrapper.appendChild(wildDiv)
-
+        
         let wildDivText = document.createElement('div')
         wildDivText.classList.add('wildDivText')
-        wildDivText.innerHTML = "GAME OVER"
+        wildDivText.innerHTML = "LEVEL DONE"
         wildDiv.appendChild(wildDivText)
-
+        
+        let wildDivText2 = document.createElement('div')
+        wildDivText2.classList.add('wildDivText2')
+        wildDivText2.innerHTML = "x out of 3 eggs survived!"
+        wildDiv.appendChild(wildDivText2)
+        
         let wildDivButton = document.createElement('button')
         wildDivButton.classList.add('wildDivButton')
-        wildDivButton.innerHTML = "Play Again"
+        wildDivButton.innerHTML = "next level"
         wildDiv.appendChild(wildDivButton)
+        
+        self = this;
+        wildDivButton.onclick = (ev) =>{
+            this.resetGame()
+        }
+        
+        this.updateWildDiv(-1)
+        // this.updateLevels()
 
 
         this.cont = document.createElement('div') 
@@ -309,17 +420,53 @@ export class Game2{
         matrixWrapper.appendChild(this.cont)
 
 
-
+        self = this
         this.fetchMatrix().then(()=>{
-            console.log(this.matrix)
-            this.createMatrix()
-            this.addBorders()
-            this.test()
-            this.addEggPropertyOnIslands()
-            this.calculateAverageHeight()
-            // this.floodIsland(0)
+
+            if(self.initialSpawn){
+                this.createMatrix()
+                this.addBorders()
+                // this.test()
+                // this.test2()
+                // console.log(this.cells)
+                for(let i = 0; i < 30; i++){
+                    // 
+                    this.cells[i].forEach(e=>{
+                        // console.log(e)
+                        e.style.backgroundColor='#1212ff'
+                        // e.style.border=' 2px dotted #6c6453'
+                        e.style.border='none'
+                        e.innerHTML = ''
+                        if(Math.random() < 0.3){
+                            e.style.borderBottom = '2px solid black'
+                        }
+                        if(Math.random() < 0.01){
+                            // e.innerHTML = '🐙'
+                            e.innerHTML = '🐠'
+                        }
+                        else if(Math.random() < 0.02){
+                            e.innerHTML = ''
+                        }
+                        e.style.borderRadius='0px'
+                    })
+
+
+                }
+                self.initialSpawn = false;
+            }else{
+                // console.log(this.matrix)
+                this.createMatrix()
+                this.addBorders()
+                this.test()
+                this.addEggPropertyOnIslands()
+                this.calculateAverageHeight()
+            }
         })
         // console.log(this.islands[2])
+
+
+
+
     }
 
     floodIsland(val){
@@ -374,7 +521,8 @@ export class Game2{
                 x.classList.add('spa')
                 cell.appendChild(x);
                 if(i==0 && j == 0){
-                    x.innerHTML = '🦆'
+                    // x.innerHTML = '🦆'
+                    x.innerHTML = this.avatar
                 }
 
                 //cell.addEventListener('mouseenter', this.test.bind(this))
@@ -383,7 +531,9 @@ export class Game2{
             }
         }
     }
-
+    updateAvatar(x){
+        this.avatar = x;
+    }
     lift(val){
         // console.log('lift')
         this.islands[val].forEach(e=>{

@@ -7,6 +7,13 @@ export class FullGame{
         this.fullDisplay
         this.cont;
         this.matrix 
+
+        this.currentLevel = 1;
+        
+
+        this.game;
+        this.livesTotal = 5;
+        this.currentLives = 5;
     }
     
     drawEverything(){
@@ -29,8 +36,8 @@ export class FullGame{
 
         self = this
         this.fetchMatrix().then(()=>{
-            const gam = new Game2(this.cont)
-            gam.begin()
+            this.game = new Game2(this.cont, this)
+            this.game.begin()
         })
         
     }
@@ -57,7 +64,8 @@ export class FullGame{
         gameDescWrapper.appendChild(gameDesc)
 
         // gameDesc.innerHTML ="The goal of the game is to pick 3 islands with highest average altitude and lay eggs on them so the chances of offspring surviving high floods are highest :) To move the duck use arrow buttons and to lay eggs use spacebar. For the information on each tiles possible altitude consult the legend below"
-        gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ 🖤"
+        // gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ 🖤"
+        gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ ❤️ "
 
 
         // //Lifes
@@ -91,6 +99,17 @@ export class FullGame{
             if(e == '🦚'){
                 avatar.classList.add('selected')
             }
+            
+            avatar.onclick = (ev) =>{
+                avatarForm.childNodes.forEach(e=>{
+                    ev.target.classList.add('selected')
+                    if(e !== ev.target)
+                    e.classList.remove('selected')
+                })
+                console.log(ev.target.innerHTML)
+                this.game.updateAvatar(ev.target.innerHTML)
+            }
+
         })
 
         //SELEKT
@@ -120,6 +139,10 @@ export class FullGame{
         // selectWrapper.appendChild(select)
         selectForm.appendChild(select)
 
+        select.onchange = (ev) =>{
+            console.log(ev.target.value)
+            this.updateLegend(ev.target.value)
+        }
 
         //FORM LEGEND
         let gameLegendWrapper = document.createElement('div')
@@ -132,7 +155,7 @@ export class FullGame{
 
         //OPCIJE
         let colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)', 'rgb(222 218 210)', 'rgb(240, 240, 240)']
-        let descs = ['0 - 280', '280 - 500', '500 - 750', '750 - 1000', 'test', 'test', 'test']
+        let descs = ['0 - 350', '350 - 450', '450 - 550', '550 - 650', '650 - 750', '750 - 880', '880 - 1000']
 
         let legendItem;
         let colorItem
@@ -162,33 +185,53 @@ export class FullGame{
         submitButton.classList.add('submitButton')
         submitButtonWrapper.appendChild(submitButton);
 
-        submitButton.innerHTML = "0/3 Eggs placed"
+        submitButton.innerHTML = "..."
 
-        //LEVELS
-        // let levelsWrapper = document.createElement('div')
-        // levelsWrapper.classList.add('levelsWrapper')
-        // form.appendChild(levelsWrapper)
+    }
 
-        // let levelLabel = document.createElement('label')
-        // levelLabel.classList.add('levelLabel')
-        // levelLabel.innerHTML = "Levels"
-        // levelsWrapper.appendChild(levelLabel)
+    updateLegend(val){
+        let legend = this.cont.querySelector('.gameLegend')
+        legend.replaceChildren()
 
-        // let levels = document.createElement('div')
-        // levels.classList.add('levels')
-        // levelsWrapper.appendChild(levels)
+        let legendItem;
+        let colorItem
+        let labelItem
 
-        // let level;
-        // for(let i  = 1; i <= 12; i++){
-        //     level = document.createElement('div')
-        //     level.innerHTML = i
-        //     level.classList.add('level')
-        //     levels.appendChild(level)
-        // }
+        let colors;
+        let descs;
 
+        switch(val){
+            case 'Easy':
+                colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)', 'rgb(222 218 210)', 'rgb(240, 240, 240)']
+                descs = ['0 - 350', '350 - 450', '450 - 550', '550 - 650', '650 - 750', '750 - 880', '880 - 1000']
+                break
+            case 'Medium':
+                colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)', 'rgb(222 218 210)', 'rgb(240, 240, 240)']
+                descs = ['0 - 280', '280 - 500', '500 - 750', '750 - 1000', 'test', 'test', 'test']
+                break
+            case 'Hard':
+                colors = ['rgb(0, 230, 0)', 'rgb(0, 200, 0)', 'rgb(253 221 120)', 'rgb(233 198 105)']
+                descs = ['0 - 280', '280 - 500', '500 - 750', '750 - 1000']
+                break
+        }       
 
+        colors.forEach((e, index)=>{
+            legendItem = document.createElement('div')
+            legendItem.classList.add('legendItem')
 
-        
+            colorItem = document.createElement('div')
+            colorItem.classList.add('colorItem')
+            colorItem.style.backgroundColor = colors[index]
+            legendItem.appendChild(colorItem)
+
+            labelItem = document.createElement('label')
+            labelItem.classList.add('labelItem')
+            labelItem.innerHTML = descs[index]
+            legendItem.appendChild(labelItem)
+
+            legend.appendChild(legendItem)
+        })
+
     }
 
     drawLevels(){
