@@ -9,12 +9,16 @@ export class Game2{
         this.initialSpawn = true;
 
         this.avatar = '🦆'
+        this.difficulty = 'Easy'
+
+        this.quack = new Audio('./Audio/quack.mp3')
 
         this.testa = 0;
-        // this.mat 
         this.cont
         this.cells = []
         this.islands = []
+
+        this.levelActive = false;
 
         this.selectedIslands = []
         this.correctIslands = []
@@ -64,14 +68,16 @@ export class Game2{
 
     addEventListeners(){
         document.addEventListener('keydown', (event)=>{
-            if(event.key == 'ArrowRight'){
-                this.moveDuck([0, 1]);
-            }
-            else if(event.key == 'ArrowLeft'){
-                this.moveDuck([0,-1])
-            }
-            else if(event.key == 'ArrowDown'){
-                this.moveDuck([1,0])
+            if(this.levelActive){
+
+                if(event.key == 'ArrowRight'){
+                    this.moveDuck([0, 1]);
+                }
+                else if(event.key == 'ArrowLeft'){
+                    this.moveDuck([0,-1])
+                }
+                else if(event.key == 'ArrowDown'){
+                    this.moveDuck([1,0])
             }
             else if(event.key == 'ArrowUp'){
                 this.moveDuck([-1,0])
@@ -82,6 +88,7 @@ export class Game2{
                 // this.fetchMatrix()
                 // this.begin(document.body)
             }
+        }
         })
 
     }
@@ -128,13 +135,14 @@ export class Game2{
                 this.moveDuck([0, this.duckInfo.currentDirection -2])
             
             this.cells[x][y].childNodes[0].innerHTML='🥚'
+            this.quack.play()
             this.selectedIslands.push(this.cells[x][y].islandNumber)
             console.log('Selected islands are:' + this.selectedIslands)
 
             let button = this.host.querySelector('.submitButton')
             button.innerHTML = `${this.selectedIslands.length}/3 Eggs placed!`
             if(this.selectedIslands.length==3){
-                button.innerHTML = `Big waves incoming, find ship!`
+                button.innerHTML = `Big waves incoming, to the ship!`
             }
             console.log(button)
 
@@ -214,12 +222,13 @@ export class Game2{
     }
 
     checkResult(){
-        console.log(this.correctIslands)
-        console.log(this.selectedIslands)
-        let gameResult = true;
+        this.levelActive = false;
 
-        gameResult = this.correctIslands.every(e => this.selectedIslands.includes(e));
+        //
+        let gameResult = this.correctIslands.every(e => this.selectedIslands.includes(e));
+        
         let rightGuesses = 0;
+
         
         this.selectedIslands.forEach(e=>{
             if(this.correctIslands.includes(e))
@@ -278,19 +287,17 @@ export class Game2{
         let wildButton = this.host.querySelector('.wildDivButton')
         
         wildDiv.style.display='flex'
-        if(val == -1){
-            console.log('sed')
+        if(val == -1){//STARTING SCREEN
             wildDiv.style.backgroundColor='#d9d29c'
             wildDiv.style.border='4px solid rgb(57, 28, 28)'
             wildDivText.innerHTML = "The Duck Game"
 
-            // wildDivText2.innerHTML = 'you ran out of lives :('
             wildButton.style.backgroundColor='#ab8e71'
             wildDivText2.style.display = 'none'
             wildButton.innerHTML = 'Start'
             wildButton.style.marginTop = '4%'
         }
-        else if(val == 0){
+        else if(val == 0){//GAME OVER
             console.log('sed')
             wildDiv.style.backgroundColor='red'
             wildDiv.style.border='4px solid rgb(57, 28, 28)'
@@ -301,22 +308,31 @@ export class Game2{
             wildDivText2.style.display = 'none'
             wildButton.innerHTML = 'Play Again'
             wildButton.style.marginTop = '4%'
-        }else if (val == 1){
+        }else if (val == 1){//LEVEL COMPLETION
 
-
-
-            wildDiv.style.backgroundColor='orange'
-            wildDiv.style.border='4px solid rgb(57, 28, 28)'
+            wildDiv.style.backgroundColor='#ebe581'
+            wildDiv.style.border='4px solid rgb(0, 0, 0)'
             wildDivText.innerHTML = "Level completed"
 
-            wildDivText2.innerHTML = `${rightGuesses} out of 3 eggs survived 🐤`
+            wildDivText2.innerHTML = `${rightGuesses} out of 3 eggs have survived 🐤`
             wildButton.style.backgroundColor='#e3d249'
             wildDivText2.style.display = 'flex'
             wildButton.innerHTML = 'next level'
             wildButton.style.marginTop = '2%'
 
         }
-        else if (val == 3){
+        else if (val == 2){
+
+            wildDiv.style.backgroundColor='#85c057'
+            wildDiv.style.border='4px solid rgb(0, 0, 0)'
+            wildDivText.innerHTML = "Great work!"
+
+            wildDivText2.style.marginTop = '2%'
+            wildDivText2.innerHTML = `You have finished the game :)`
+            wildButton.style.backgroundColor='#ffe506'
+            wildDivText2.style.display = 'flex'
+            wildButton.innerHTML = 'Replay'
+            wildButton.style.marginTop = '2%'
 
         }
 
@@ -338,6 +354,7 @@ export class Game2{
         hearts.innerHTML = srt;
     }
     resetGame(){
+        this.levelActive = true;
 
         // this.cont.parentNode.removeChild(this.cont)
         this.updateLevels()
@@ -349,6 +366,9 @@ export class Game2{
         this.correctIslands.length = 0;
         this.islands.length = 0;
         this.cells.length = 0;
+
+        let subBut = this.host.parentNode.querySelector('.submitButton')
+        subBut.innerHTML = 'Place first egg!'
 
         let wildDiv = this.host.querySelector('.wildDiv')
         wildDiv.style.display = 'none'
@@ -364,7 +384,7 @@ export class Game2{
 
         })
 
-
+        
 
     }
 
@@ -534,6 +554,9 @@ export class Game2{
     updateAvatar(x){
         this.avatar = x;
     }
+    updateDifficulty(dif){
+        this.difficulty = dif;
+    }
     lift(val){
         // console.log('lift')
         this.islands[val].forEach(e=>{
@@ -692,6 +715,39 @@ export class Game2{
 
     getColorBasedOnHeight(height) {
         // Ako je visina 0 (voda)
+
+
+        if(height===0) return 'blue'
+
+        if(this.difficulty == 'Easy'){
+
+            if (height <= 350) return 'rgb(0 246 0)'
+            if (height <= 450) return 'rgb(3 220 3)'
+            if (height <= 550) return 'rgb(20 206 20)'
+            if (height <= 650) return 'rgb(253 221 120)'
+            if (height <= 750) return 'rgb(233 198 105)'
+            if (height <= 880) return 'rgb(222 218 210)'
+            return 'rgb(240, 240, 240)'
+        }
+        if(this.difficulty == 'Medium'){
+
+            if (height <= 350) return 'rgb(0 246 0)'
+            if (height <= 500) return 'rgb(3 220 3)'
+            if (height <= 650) return 'rgb(20 206 20)'
+            if (height <= 750) return 'rgb(253 221 120)'
+            return 'rgb(233 198 105)'
+
+        }
+        if(this.difficulty == 'Hard'){
+
+            if (height <= 280) return 'rgb(0, 230, 0)'
+            if (height <= 500) return 'rgb(0, 200, 0)'
+            if (height <= 750) return 'rgb(253 221 120)'
+            return 'rgb(233 198 105)'
+        }
+
+
+
         if (height === 0) {
           return 'blue'; // Voda (plava)
         }

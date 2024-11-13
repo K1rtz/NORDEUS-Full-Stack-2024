@@ -1,13 +1,7 @@
 import {Game} from './Game.js'
 import {Game2} from './Game2.js'
 import { FullGame } from './FullGame.js';
-// fetch('https://jobfair.nordeus.com/jf24-fullstack-challenge/test')
-// .then(res => res.json())
-// .then(data => console.log(data))
 
-// URL sa kojeg povlačimo podatke
-
-// Funkcija za preuzimanje matrice
 
 async function fetchMatrix() {
     const url = 'https://jobfair.nordeus.com/jf24-fullstack-challenge/test';

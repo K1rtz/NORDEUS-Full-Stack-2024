@@ -12,8 +12,8 @@ export class FullGame{
         
 
         this.game;
-        this.livesTotal = 5;
-        this.currentLives = 5;
+        this.livesTotal = 6;
+        this.currentLives = 6;
     }
     
     drawEverything(){
@@ -65,7 +65,7 @@ export class FullGame{
 
         // gameDesc.innerHTML ="The goal of the game is to pick 3 islands with highest average altitude and lay eggs on them so the chances of offspring surviving high floods are highest :) To move the duck use arrow buttons and to lay eggs use spacebar. For the information on each tiles possible altitude consult the legend below"
         // gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ 🖤"
-        gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ ❤️ "
+        gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ ❤️ ❤️ "
 
 
         // //Lifes
@@ -96,7 +96,7 @@ export class FullGame{
             avatar.classList.add('avatarButton')
             avatar.innerHTML = e
             avatarForm.appendChild(avatar)
-            if(e == '🦚'){
+            if(e == '🦆'){
                 avatar.classList.add('selected')
             }
             
@@ -142,6 +142,8 @@ export class FullGame{
         select.onchange = (ev) =>{
             console.log(ev.target.value)
             this.updateLegend(ev.target.value)
+            this.updateHearts(ev.target.value)
+            this.game.updateDifficulty(ev.target.value)
         }
 
         //FORM LEGEND
@@ -154,28 +156,9 @@ export class FullGame{
         gameLegendWrapper.appendChild(gameLegend)
 
         //OPCIJE
-        let colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)', 'rgb(222 218 210)', 'rgb(240, 240, 240)']
-        let descs = ['0 - 350', '350 - 450', '450 - 550', '550 - 650', '650 - 750', '750 - 880', '880 - 1000']
+        this.updateLegend('Easy')
 
-        let legendItem;
-        let colorItem
-        let labelItem
-        colors.forEach((e, index)=>{
-            legendItem = document.createElement('div')
-            legendItem.classList.add('legendItem')
 
-            colorItem = document.createElement('div')
-            colorItem.classList.add('colorItem')
-            colorItem.style.backgroundColor = colors[index]
-            legendItem.appendChild(colorItem)
-
-            labelItem = document.createElement('label')
-            labelItem.classList.add('labelItem')
-            labelItem.innerHTML = descs[index]
-            legendItem.appendChild(labelItem)
-
-            gameLegend.appendChild(legendItem)
-        })
         //SUBMIT BUTTON
         let submitButtonWrapper = document.createElement('div')
         submitButtonWrapper.classList.add('submitButtonWrapper')
@@ -187,6 +170,20 @@ export class FullGame{
 
         submitButton.innerHTML = "..."
 
+    }
+
+    updateHearts(val){
+        if(val == 'Hard') this.livesTotal = 4
+        if(val == 'Medium') this.livesTotal = 5
+        if(val == 'Easy') this.livesTotal = 6
+        this.currentLives = this.livesTotal
+
+        let desc = this.cont.querySelector('.gameDesc')
+        let txt = ''
+        for(let i = 0; i < this.livesTotal; i++){
+            txt+= '❤️ '
+        }
+        desc.innerHTML = txt;
     }
 
     updateLegend(val){
@@ -206,8 +203,8 @@ export class FullGame{
                 descs = ['0 - 350', '350 - 450', '450 - 550', '550 - 650', '650 - 750', '750 - 880', '880 - 1000']
                 break
             case 'Medium':
-                colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)', 'rgb(222 218 210)', 'rgb(240, 240, 240)']
-                descs = ['0 - 280', '280 - 500', '500 - 750', '750 - 1000', 'test', 'test', 'test']
+                colors = ['rgb(0 246 0)', 'rgb(3 220 3)', 'rgb(20 206 20)', 'rgb(253 221 120)', 'rgb(233 198 105)']
+                descs = ['0 - 350', '350 - 500', '500 - 650', '650 - 750', '750 - 1000']
                 break
             case 'Hard':
                 colors = ['rgb(0, 230, 0)', 'rgb(0, 200, 0)', 'rgb(253 221 120)', 'rgb(233 198 105)']
@@ -270,17 +267,12 @@ export class FullGame{
                 throw new Error('Network response was not ok');
             }
     
-            const text = await response.text();
-            
-            //console.log('Response Text:', text);
-    
+            const text = await response.text();    
     
             const rows = text.trim().split('\n');
             this.matrix = rows.map(row => 
-                row.split(' ').map(Number) // Podeli svaki red na vrednosti i konvertuj u broj
+                row.split(' ').map(Number)
             );
-            //const gam = new Game2(matrix);
-            //gam.begin()
             
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
