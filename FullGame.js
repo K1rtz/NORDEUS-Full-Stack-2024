@@ -8,12 +8,7 @@ export class FullGame{
         this.cont;
         this.matrix 
 
-        this.currentLevel = 1;
-        
-
         this.game;
-        this.livesTotal = 6;
-        this.currentLives = 6;
     }
     
     drawEverything(){
@@ -63,16 +58,10 @@ export class FullGame{
         gameDesc.classList.add('gameDesc')
         gameDescWrapper.appendChild(gameDesc)
 
-        // gameDesc.innerHTML ="The goal of the game is to pick 3 islands with highest average altitude and lay eggs on them so the chances of offspring surviving high floods are highest :) To move the duck use arrow buttons and to lay eggs use spacebar. For the information on each tiles possible altitude consult the legend below"
-        // gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ 🖤"
         gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ ❤️ ❤️ "
 
 
-        // //Lifes
-        // let lifeCount = document.createElement('div')
-        // lifeCount.classList.add('lifeCount')
-        // lifeCount.innerHTML = 'would it be too much to keep the explanation here :investigateprime:'
-        // form.appendChild(lifeCount)
+
 
         //AVATAR
 
@@ -101,13 +90,16 @@ export class FullGame{
             }
             
             avatar.onclick = (ev) =>{
-                avatarForm.childNodes.forEach(e=>{
-                    ev.target.classList.add('selected')
-                    if(e !== ev.target)
-                    e.classList.remove('selected')
-                })
-                console.log(ev.target.innerHTML)
-                this.game.updateAvatar(ev.target.innerHTML)
+                if(!this.game.gameActive){
+
+                    avatarForm.childNodes.forEach(e=>{
+                        ev.target.classList.add('selected')
+                        if(e !== ev.target)
+                            e.classList.remove('selected')
+                    })
+                    console.log(ev.target.innerHTML)
+                    this.game.updateAvatar(ev.target.innerHTML)
+                }
             }
 
         })
@@ -142,7 +134,7 @@ export class FullGame{
         select.onchange = (ev) =>{
             console.log(ev.target.value)
             this.updateLegend(ev.target.value)
-            this.updateHearts(ev.target.value)
+            this.game.updateLives(ev.target.value)
             this.game.updateDifficulty(ev.target.value)
         }
 
@@ -172,19 +164,7 @@ export class FullGame{
 
     }
 
-    updateHearts(val){
-        if(val == 'Hard') this.livesTotal = 4
-        if(val == 'Medium') this.livesTotal = 5
-        if(val == 'Easy') this.livesTotal = 6
-        this.currentLives = this.livesTotal
-
-        let desc = this.cont.querySelector('.gameDesc')
-        let txt = ''
-        for(let i = 0; i < this.livesTotal; i++){
-            txt+= '❤️ '
-        }
-        desc.innerHTML = txt;
-    }
+    
 
     updateLegend(val){
         let legend = this.cont.querySelector('.gameLegend')

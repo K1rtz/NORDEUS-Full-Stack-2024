@@ -1,40 +1,49 @@
 export class Game2{
 
 
-    constructor(host, fullGame){
-        this.fullGame = fullGame
+    constructor(host){
         this.host = host;
-        this.matrix; //= matrix;
+        this.matrix;
 
+        //GAME THIGNYS
         this.initialSpawn = true;
-
+        this.currentLevel = 1;
+        this.livesTotal = 6;
+        this.currentLives = 6;
         this.avatar = '🦆'
         this.difficulty = 'Easy'
 
-        this.quack = new Audio('./Audio/quack.mp3')
 
-        this.testa = 0;
+        this.quack = new Audio('./Audio/quack.mp3')
+        this.music = new Audio('./Audio/game-music.mp3')
+
         this.cont
         this.cells = []
         this.islands = []
-
-        this.levelActive = false;
-
         this.selectedIslands = []
         this.correctIslands = []
 
-        this.addEventListeners();
+        
+        this.levelActive = false;
+        this.gameActive = false;
 
+        
         this.duckInfo = {
             x: 0,
             y: 0,
             currentDirection: 1
-
         }
-
+        
+        this.addEventListeners();
     }
 
+    updateLives(val){
+        if(val == 'Hard') this.livesTotal = this.currentLives = 4
+        if(val == 'Medium') this.livesTotal = this.currentLives = 5
+        if(val == 'Easy') this.livesTotal = this.currentLives = 6
+        this.updateHearts()
 
+    }
     
 
     async fetchMatrix() {
@@ -47,17 +56,13 @@ export class Game2{
                 throw new Error('Network response was not ok');
             }
     
-            const text = await response.text();
-            
-            //console.log('Response Text:', text);
-    
+            const text = await response.text();    
     
             const rows = text.trim().split('\n');
             this.matrix = rows.map(row => 
-                row.split(' ').map(Number) // Podeli svaki red na vrednosti i konvertuj u broj
+                row.split(' ').map(Number) 
             );
-            //const gam = new Game2(matrix);
-            //gam.begin()
+
             console.log('success')
             
         } catch (error) {
@@ -69,7 +74,6 @@ export class Game2{
     addEventListeners(){
         document.addEventListener('keydown', (event)=>{
             if(this.levelActive){
-
                 if(event.key == 'ArrowRight'){
                     this.moveDuck([0, 1]);
                 }
@@ -84,17 +88,13 @@ export class Game2{
             }
             else if(event.key == ' '){
                 this.layEgg()
-                // this.floodIsland(0)
-                // this.fetchMatrix()
-                // this.begin(document.body)
             }
         }
         })
-
     }
 
-    calculateAverageHeight(){
-        let t = []
+    calculateAverageIslandHeight(){
+        let islandIndexAndAverage = []
         this.islands.forEach((island, index)=>{
             let islandNumber = index
             let islandAverage = 0;
@@ -102,29 +102,22 @@ export class Game2{
                 islandAverage+=e.height
             })
             islandAverage/=island.length;
-            t.push({index: islandNumber,
+            islandIndexAndAverage.push({index: islandNumber,
                     averageHeight: islandAverage
             })
         })
-        let t3 = t.sort((a,b) => b.averageHeight - a.averageHeight).slice(0 , 3)
-        t3.forEach(e=>{
+        let top3 = islandIndexAndAverage.sort((a,b) => b.averageHeight - a.averageHeight).slice(0 , 3)
+        top3.forEach(e=>{
             this.correctIslands.push(e.index)
         })
-        // this.correctIslands
-        console.log(t3)
-        console.log(t)
+        console.log(top3)
+        
     }
 
     layEgg(){
         let x = this.duckInfo.x
         let y = this.duckInfo.y
-        // console.log(this.fullGame.lives)
-        let i;
-        // do{
-        //     i = Math.random() > 0.5 ? -1 : 1
-        //     console.log(i)
-        // }
-        // while(!this.moveDuck([0, i]))
+
         const islandElement = this.islands[this.cells[x][y].islandNumber][0];
         // console.log(this.cells[x][y].height)
         if(islandElement.getAttribute('hasEgg') != 'true' && this.selectedIslands.length<3){
@@ -132,7 +125,7 @@ export class Game2{
 
             this.islands[this.cells[x][y].islandNumber][0].setAttribute('hasEgg', 'true');
             if(!this.moveDuck([0, this.duckInfo.currentDirection]))
-                this.moveDuck([0, this.duckInfo.currentDirection -2])
+                this.moveDuck([0, -this.duckInfo.currentDirection])
             
             this.cells[x][y].childNodes[0].innerHTML='🥚'
             this.quack.play()
@@ -222,62 +215,52 @@ export class Game2{
     }
 
     checkResult(){
+        this.music.pause()
         this.levelActive = false;
-
-        //
-        let gameResult = this.correctIslands.every(e => this.selectedIslands.includes(e));
-        
         let rightGuesses = 0;
 
-        
         this.selectedIslands.forEach(e=>{
             if(this.correctIslands.includes(e))
                 rightGuesses++;
         })
         
-        this.updateWildDiv(1, rightGuesses)
-
         this.islands.forEach(e=>{
             if(!this.correctIslands.includes(e[0].islandNumber)){
-
                 e.forEach(i=>{
                     i.classList.add('flood1')
                 })
             }
         })
 
-        console.log(rightGuesses)
-        
-        this.fullGame.currentLives -= (3-rightGuesses)
-        console.log(this.fullGame.currentLives)
-
-        if(this.fullGame.currentLives <= 0){
-            console.log('ITS OVER')
-            this.updateLevels(0)
-            this.updateWildDiv(0)
-        }else{
-            this.fullGame.currentLevel++
-        }
-
+        //Updating lives
+        this.currentLives -= (3-rightGuesses)
         this.updateHearts()
 
-        if(gameResult){
-            console.log("Victory!")
+        //GAME OVER
+        if(this.currentLives <= 0){
+            this.gameActive = false;
+            this.host.parentNode.querySelector('.select1').disabled = false;
+            this.updateLevels(0)
+            this.updateWildDiv(0)
+        }else if(this.currentLives > 0 && this.currentLevel<12){//NEXT LEVEL
+            this.updateLevels(0)
+            this.currentLevel++
+            this.updateWildDiv(1, rightGuesses)
         }else{
-            console.log('Defeat!')
+            this.gameActive = false;
+            this.host.parentNode.querySelector('.select1').disabled = false;
+            this.updateLevels(0)
+            this.updateWildDiv(2)
         }
-
-        console.log(this.host)
-
     }  
 
     updateLevels(){
-        console.log(this.fullGame.currentLevel)
-        console.log(this.fullGame)
         let levelsForm = this.host.parentNode.querySelector('.levelsForm')
-        console.log(levelsForm)
-        levelsForm.childNodes[this.fullGame.currentLevel-1].style.backgroundColor = 'yellow'
-        levelsForm.childNodes[this.fullGame.currentLevel-1].style.border = '4px solid orange'
+        for(let i = 0; i < 12; i++){
+            i < this.currentLevel ? 
+            levelsForm.childNodes[i].classList.add('active') :
+            levelsForm.childNodes[i].classList.remove('active')
+        }
     }
 
     updateWildDiv(val, rightGuesses){
@@ -291,10 +274,13 @@ export class Game2{
             wildDiv.style.backgroundColor='#d9d29c'
             wildDiv.style.border='4px solid rgb(57, 28, 28)'
             wildDivText.innerHTML = "The Duck Game"
+            wildDiv.style.borderRadius = '8px'
+
 
             wildButton.style.backgroundColor='#ab8e71'
             wildDivText2.style.display = 'none'
             wildButton.innerHTML = 'Start'
+            wildButton.style.borderRadius = '5px'
             wildButton.style.marginTop = '4%'
         }
         else if(val == 0){//GAME OVER
@@ -302,61 +288,67 @@ export class Game2{
             wildDiv.style.backgroundColor='red'
             wildDiv.style.border='4px solid rgb(57, 28, 28)'
             wildDivText.innerHTML = "GAME OVER"
+            wildDiv.style.borderRadius = '8px'
 
-            // wildDivText2.innerHTML = 'you ran out of lives :('
+
             wildButton.style.backgroundColor='#c00000'
             wildDivText2.style.display = 'none'
+            wildButton.style.borderRadius = '5px'
             wildButton.innerHTML = 'Play Again'
             wildButton.style.marginTop = '4%'
         }else if (val == 1){//LEVEL COMPLETION
-
             wildDiv.style.backgroundColor='#ebe581'
             wildDiv.style.border='4px solid rgb(0, 0, 0)'
             wildDivText.innerHTML = "Level completed"
+            wildDiv.style.borderRadius = '8px'
 
-            wildDivText2.innerHTML = `${rightGuesses} out of 3 eggs have survived 🐤`
+            let str = ''
+            for(let i = 0; i < 3; i++){
+                i < rightGuesses ? str+='🐣' : str+='🍗'
+            }
+
+            wildDivText2.innerHTML = `${rightGuesses} out of 3 eggs have survived ` + str
             wildButton.style.backgroundColor='#e3d249'
             wildDivText2.style.display = 'flex'
             wildButton.innerHTML = 'next level'
+            wildButton.style.borderRadius = '5px'
             wildButton.style.marginTop = '2%'
 
         }
-        else if (val == 2){
-
+        else if (val == 2){//GAME COMPLETION
             wildDiv.style.backgroundColor='#85c057'
             wildDiv.style.border='4px solid rgb(0, 0, 0)'
             wildDivText.innerHTML = "Great work!"
+            wildDiv.style.borderRadius = '8px'
 
             wildDivText2.style.marginTop = '2%'
             wildDivText2.innerHTML = `You have finished the game :)`
-            wildButton.style.backgroundColor='#ffe506'
+            wildButton.style.backgroundColor='#ffffff'
             wildDivText2.style.display = 'flex'
             wildButton.innerHTML = 'Replay'
+            wildButton.style.borderRadius = '5px'
             wildButton.style.marginTop = '2%'
-
         }
-
-
     }
 
     updateHearts(){
         let hearts = this.host.querySelector('.gameDesc')
         let srt = ''
-        for(let i = 0; i < this.fullGame.livesTotal; i++){
-            if(i < this.fullGame.currentLives){
+        for(let i = 0; i < this.livesTotal; i++){
+            if(i < this.currentLives){
                 srt += '❤️ '
             }
             else{
                 srt+= '🖤 '
             }
         }
-        console.log(srt)
         hearts.innerHTML = srt;
     }
+
+
     resetGame(){
         this.levelActive = true;
 
-        // this.cont.parentNode.removeChild(this.cont)
         this.updateLevels()
         this.duckInfo.x = 0;
         this.duckInfo.y = 0;
@@ -378,14 +370,11 @@ export class Game2{
         this.fetchMatrix().then(()=>{      
             this.createMatrix()
             this.addBorders()
-            this.test()
+            this.findAllIslands()
             this.addEggPropertyOnIslands()
-            this.calculateAverageHeight()
+            this.calculateAverageIslandHeight()
 
         })
-
-        
-
     }
 
     addEggPropertyOnIslands(){
@@ -395,7 +384,6 @@ export class Game2{
     }
 
     initializeNextLevel(){
-        // this.updateLevels()
         this.resetGame()
     }
 
@@ -428,12 +416,23 @@ export class Game2{
         
         self = this;
         wildDivButton.onclick = (ev) =>{
+
+            this.music.loop = true;
+            this.music.play()
             this.resetGame()
+            this.host.parentNode.querySelector('.select1').disabled = true;
+
+
+            if(!this.gameActive){
+                this.currentLives = this.livesTotal;
+                this.updateLives()
+                this.gameActive = true;
+                this.currentLevel  = 1
+                this.updateLevels()   
+            }
         }
         
         this.updateWildDiv(-1)
-        // this.updateLevels()
-
 
         this.cont = document.createElement('div') 
         this.cont.classList.add('matrix'); 
@@ -446,19 +445,15 @@ export class Game2{
             if(self.initialSpawn){
                 this.createMatrix()
                 this.addBorders()
-                // this.test()
-                // this.test2()
-                // console.log(this.cells)
+
                 for(let i = 0; i < 30; i++){
                     // 
                     this.cells[i].forEach(e=>{
-                        // console.log(e)
                         e.style.backgroundColor='#1212ff'
-                        // e.style.border=' 2px dotted #6c6453'
                         e.style.border='none'
                         e.innerHTML = ''
                         if(Math.random() < 0.3){
-                            e.style.borderBottom = '2px solid black'
+                            e.style.borderBottom = '1px solid black'
                         }
                         if(Math.random() < 0.01){
                             // e.innerHTML = '🐙'
@@ -474,27 +469,13 @@ export class Game2{
                 }
                 self.initialSpawn = false;
             }else{
-                // console.log(this.matrix)
                 this.createMatrix()
                 this.addBorders()
-                this.test()
+                this.findAllIslands()
                 this.addEggPropertyOnIslands()
-                this.calculateAverageHeight()
+                this.calculateAverageIslandHeight()
             }
         })
-        // console.log(this.islands[2])
-
-
-
-
-    }
-
-    floodIsland(val){
-        console.log(this.islands[0][0])
-        this.islands[0].forEach(e=>{
-            e.classList.add('flood1')
-        })
-
     }
 
     createMatrix() {
@@ -517,37 +498,19 @@ export class Game2{
                 if(!cell.water){
                     cell.style.border = '1px solid black'
                 }
-                // cell.textContent = i * 30 + j + 1; // Popuni div sa brojem (1, 2, ..., 900)
+
                 this.cont.appendChild(cell); 
                 cell.i = i
                 cell.j = j
-                // self = this;
-                //MOUSE DETECTION
-                // if(!cell.water){
-                //     cell.addEventListener('mouseenter', (event) => {
-                //         // const islandNumber = event.target.getAttribute('islandNumber');
-                //         // console.log(event.target.islandNumber);
-                //         this.lift(event.target.islandNumber)
-                //     })
-                //     cell.addEventListener('mouseleave', (event) => {
-                //         // const islandNumber = event.target.getAttribute('islandNumber');
-                //         // console.log(event.target.islandNumber);
-                //         this.lower(event.target.islandNumber)
-                //     })
-                // }
+
                 cell.classList.add('tet')
                 let x = document.createElement('span')
                 x.classList.add('span1')
                 x.classList.add('spa')
                 cell.appendChild(x);
                 if(i==0 && j == 0){
-                    // x.innerHTML = '🦆'
                     x.innerHTML = this.avatar
                 }
-
-                //cell.addEventListener('mouseenter', this.test.bind(this))
-
-
             }
         }
     }
@@ -557,38 +520,32 @@ export class Game2{
     updateDifficulty(dif){
         this.difficulty = dif;
     }
+
     lift(val){
-        // console.log('lift')
         this.islands[val].forEach(e=>{
-            // e.style.backgroundColor='purple'
-            e.classList.add('test')
             e.classList.remove('tet')
         })
     }
-
     lower(val){
         this.islands[val].forEach(e=>{
-            // e.style.backgroundColor='purple'
-            e.classList.remove('test')
             e.classList.add('tet')
-
         })
     }
 
 
-    test(){
+    findAllIslands(){
         for(let i = 0; i < 30; i ++){
             for(let j = 0; j < 30; j++){
                 if(!this.cells[i][j].visited && !this.cells[i][j].water){
-                    this.test2(i, j);
+                    this.exploreIsland(i, j);
                 }
             }
         }
     }
 
 
-    test2(i, j){
-        console.log('ss')
+    exploreIsland(i, j){
+
         this.islands[this.islands.length] = [] 
         this.islands[this.islands.length-1].push(this.cells[i][j]);
         this.cells[i][j].islandNumber = this.islands.length-1
@@ -603,31 +560,29 @@ export class Game2{
             let j = current.j
             current.visited = true;
 
-            // current.style.backgroundColor='red'
-
             if(this.cells[i-1]?.[j] && !this.cells[i-1][j].visited && !this.cells[i-1][j].water){
                 this.cells[i-1][j].visited = true;
-                this.islands[this.islands.length-1].push(this.cells[i-1][j]);
                 this.cells[i-1][j].islandNumber = this.islands.length-1
+                this.islands[this.islands.length-1].push(this.cells[i-1][j]);
                 queue.push(this.cells[i-1][j])
             }
             if(this.cells[i][j+1] && !this.cells[i][j+1].visited && !this.cells[i][j+1].water){
                 this.cells[i][j+1].visited = true;
-                this.islands[this.islands.length-1].push(this.cells[i][j+1]);
                 this.cells[i][j+1].islandNumber = this.islands.length-1
+                this.islands[this.islands.length-1].push(this.cells[i][j+1]);
                 queue.push(this.cells[i][j+1])
 
             }
             if(this.cells[i+1]?.[j] && !this.cells[i+1][j].visited && !this.cells[i+1][j].water){
                 this.cells[i+1][j].visited = true;
-                this.islands[this.islands.length-1].push(this.cells[i+1][j]);
                 this.cells[i+1][j].islandNumber = this.islands.length-1
+                this.islands[this.islands.length-1].push(this.cells[i+1][j]);
                 queue.push(this.cells[i+1][j])
             }
             if(this.cells[i][j-1] && !this.cells[i][j-1].visited && !this.cells[i][j-1].water){
                 this.cells[i][j-1].visited = true;
-                this.islands[this.islands.length-1].push(this.cells[i][j-1]);
                 this.cells[i][j-1].islandNumber = this.islands.length-1
+                this.islands[this.islands.length-1].push(this.cells[i][j-1]);
                 queue.push(this.cells[i][j-1])
             }
         }
@@ -635,6 +590,7 @@ export class Game2{
     }
 
     addBorders(){
+
         for(let i = 0; i < 30; i++){
             for(let j = 0; j < 30; j++){
                 if(j<29){
@@ -655,8 +611,6 @@ export class Game2{
                 if(i>0 && j<29){
                     if(!this.cells[i][j].water && this.cells[i-1][j].water && this.cells[i][j+1].water){
                         this.cells[i][j].style.borderTopRightRadius = radius
-                        // this.cells[i-1][j].style.borderBottom='none'
-                        // this.cells[i][j+1].style.borderLeft='none'
                     }
                 }
                 if(i>0 && j>0){
@@ -678,26 +632,19 @@ export class Game2{
                 let color = this.getColorBasedOnHeight(this.matrix[i][j])
                 this.cells[i][j].style.backgroundColor = color;
 
-                //DODAVANJE SLICICA
-                // if(this.matrix[i][j]<290 && this.matrix[i][j]>0){
-                //     if(Math.random()<.02)
-                //     this.cells[i][j].innerHTML='🏠'
-                // }
-                // if(this.matrix[i][j]>=290 && this.matrix[i][j]<500){
-                //     if(Math.random()<.02)
-                //         this.cells[i][j].innerHTML='🌳'
-                // }
-                // if(this.matrix[i][j]>=500 && this.matrix[i][j]<750){
-                //     if(Math.random()<.02)
-                //         this.cells[i][j].innerHTML='🌲'
-                // }
-                //
-
-                
-
-
-                // console.log(this.matrix[i][j])
-
+                // DODAVANJE SLICICA
+                if(this.matrix[i][j]<290 && this.matrix[i][j]>0){
+                    if(Math.random()<.02)
+                    this.cells[i][j].innerHTML='🏠'
+                }
+                if(this.matrix[i][j]>=290 && this.matrix[i][j]<500){
+                    if(Math.random()<.02)
+                        this.cells[i][j].innerHTML='🌳'
+                }
+                if(this.matrix[i][j]>=500 && this.matrix[i][j]<750){
+                    if(Math.random()<.02)
+                        this.cells[i][j].innerHTML='🌲'
+                }
             }
 
         }
@@ -714,13 +661,10 @@ export class Game2{
     }
 
     getColorBasedOnHeight(height) {
-        // Ako je visina 0 (voda)
-
 
         if(height===0) return 'blue'
 
         if(this.difficulty == 'Easy'){
-
             if (height <= 350) return 'rgb(0 246 0)'
             if (height <= 450) return 'rgb(3 220 3)'
             if (height <= 550) return 'rgb(20 206 20)'
@@ -730,60 +674,17 @@ export class Game2{
             return 'rgb(240, 240, 240)'
         }
         if(this.difficulty == 'Medium'){
-
             if (height <= 350) return 'rgb(0 246 0)'
             if (height <= 500) return 'rgb(3 220 3)'
             if (height <= 650) return 'rgb(20 206 20)'
             if (height <= 750) return 'rgb(253 221 120)'
             return 'rgb(233 198 105)'
-
         }
         if(this.difficulty == 'Hard'){
-
             if (height <= 280) return 'rgb(0, 230, 0)'
             if (height <= 500) return 'rgb(0, 200, 0)'
             if (height <= 750) return 'rgb(253 221 120)'
             return 'rgb(233 198 105)'
         }
-
-
-
-        if (height === 0) {
-          return 'blue'; // Voda (plava)
-        }
-      
-        if (height <= 350) {
-        //   return 'rgb(0, 230, 0)'
-          return 'rgb(0 246 0)'
-        }
-      
-        else if (height <= 450) {
-        // return 'rgb(0, 200, 0)'
-        return 'rgb(3 220 3)'
-        }
-        else if (height <= 550) {
-            // return 'rgb(0, 200, 0)'
-            return 'rgb(20 206 20)'
-            }
-      
-        else if (height <= 650) {
-        // return 'rgb(192, 168, 92)'
-        return 'rgb(253 221 120)'
-
-        }
-        else if(height <=750){
-            // return 'rgb(159, 137, 78)'
-            return 'rgb(233 198 105)'
-
-        }
-        else if(height <=880){
-            return 'rgb(222 218 210)'
-
-        }
-      
-        return 'rgb(240, 240, 240)'
     }
-
-
-
 }
