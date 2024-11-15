@@ -368,18 +368,11 @@ export class Game2{
         this.cont.replaceChildren()
 
         this.fetchMatrix().then(()=>{      
-            this.createMatrix()
+            this.createCellMatrix()
             this.addBorders()
             this.findAllIslands()
-            this.addEggPropertyOnIslands()
             this.calculateAverageIslandHeight()
 
-        })
-    }
-
-    addEggPropertyOnIslands(){
-        this.islands.forEach(e=>{
-            e[0].setAttribute('hasEgg', 'false')
         })
     }
 
@@ -430,6 +423,7 @@ export class Game2{
                 this.currentLevel  = 1
                 this.updateLevels()   
             }
+            
         }
         
         this.updateWildDiv(-1)
@@ -443,7 +437,7 @@ export class Game2{
         this.fetchMatrix().then(()=>{
 
             if(self.initialSpawn){
-                this.createMatrix()
+                this.createCellMatrix()
                 this.addBorders()
 
                 for(let i = 0; i < 30; i++){
@@ -469,51 +463,59 @@ export class Game2{
                 }
                 self.initialSpawn = false;
             }else{
-                this.createMatrix()
+                this.createCellMatrix()
                 this.addBorders()
                 this.findAllIslands()
-                this.addEggPropertyOnIslands()
                 this.calculateAverageIslandHeight()
             }
         })
     }
 
-    createMatrix() {
-
-
-
+    createCellMatrix() {
         for (let i = 0; i < 30; i++) {
             this.cells[i] = []
             for (let j = 0; j < 30; j++) {
-                const cell = document.createElement('div'); 
-                if(this.matrix[i][j]==0){
-                    cell.style.backgroundColor="blue"
-                    cell.water = true;
-                }else{
-                    cell.style.backgroundColor="green"
-                }
-                cell.height = this.matrix[i][j];
+
+                const cell = this.createCell(i, j)
+                console.log(cell)
+                console.log(cell.height)
                 this.cells[i].push(cell)
-                cell.classList.add('cell');
-                if(!cell.water){
-                    cell.style.border = '1px solid black'
-                }
-
-                this.cont.appendChild(cell); 
-                cell.i = i
-                cell.j = j
-
-                cell.classList.add('tet')
-                let x = document.createElement('span')
-                x.classList.add('span1')
-                x.classList.add('spa')
-                cell.appendChild(x);
-                if(i==0 && j == 0){
-                    x.innerHTML = this.avatar
-                }
+                this.cont.appendChild(cell)
             }
         }
     }
+
+    createCell(i, j){
+        const cell = document.createElement('div');
+        cell.classList.add('cell', 'tet');
+        cell.i = i;
+        cell.j = j;
+        cell.water = this.matrix[i][j] === 0;
+    
+        // Dodaj boju i granicu na osnovu toga da li je voda ili kopno
+        cell.style.backgroundColor = cell.water ? 'blue' : 'green';
+        if (!cell.water) {
+            cell.style.border = '1px solid black';
+        }
+        
+        cell.height = this.matrix[i][j];
+    
+        // Kreiraj span za prikaz avatara ili drugih simbola
+        const span = document.createElement('span');
+        span.classList.add('span1', 'spa');
+        cell.appendChild(span);
+    
+        // Postavi avatar u gornji levi ugao
+        if (i === 0 && j === 0) {
+            span.innerHTML = this.avatar;
+        }
+    
+        return cell;
+    }
+
+
+
+
     updateAvatar(x){
         this.avatar = x;
     }
@@ -546,6 +548,7 @@ export class Game2{
 
     exploreIsland(i, j){
 
+        this.cells[i][j].setAttribute('hasEgg', 'false')
         this.islands[this.islands.length] = [] 
         this.islands[this.islands.length-1].push(this.cells[i][j]);
         this.cells[i][j].islandNumber = this.islands.length-1

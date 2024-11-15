@@ -119,8 +119,7 @@ body{
 }
 
 .tet{
-  /* opacity: .8; */
-  /* filter: brightness(0.7) !important; */
+
   filter: brightness(0.7) !important;
 }
 
@@ -207,7 +206,7 @@ body{
   display: flex;              /* Flexbox za centriranje */
   justify-content: center;    /* Centriranje horizontalno */
   align-items: center; 
-  padding: 18px;
+  padding: 17px 18px 15px 15px;
 }
 .form{
   box-sizing: border-box;
