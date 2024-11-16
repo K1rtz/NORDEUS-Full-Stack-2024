@@ -1,45 +1,34 @@
-import { Game2 } from "./Game2.js";
+import { Game } from "./Game.js";
 
 export class FullGame{
 
 
     constructor(){
-        this.fullDisplay
-        this.cont;
-        this.matrix 
-
+        this.gameContainer
         this.game;
     }
     
     drawEverything(){
 
-        this.fullDisplay = document.createElement('div')
-        this.fullDisplay.classList.add('fullDisplay')
-        document.body.appendChild(this.fullDisplay)
+        this.gameContainer = document.createElement('div')
+        this.gameContainer.classList.add('gameContainer')
+        document.body.appendChild(this.gameContainer)
 
+        const formAndDisplayWrapper = document.createElement('div')
+        formAndDisplayWrapper.classList.add('formAndDisplayWrapper')
+        this.gameContainer.appendChild(formAndDisplayWrapper)
 
-
-        this.cont = document.createElement('div')
-        this.cont.classList.add('mainCont')
-
-        
-
-        this.fullDisplay.appendChild(this.cont)
-
-        this.drawForm(this.cont)
+        this.drawForm(formAndDisplayWrapper)
         this.drawLevels()
 
-        self = this
-        this.fetchMatrix().then(()=>{
-            this.game = new Game2(this.cont, this)
-            this.game.begin()
-        })
+
+        this.game = new Game(formAndDisplayWrapper, this)
+        this.game.begin()
         
     }
     
     drawForm(host){
         //GAME FORM 
-
 
         let formWrapper = document.createElement('div')
         formWrapper.classList.add('formWrapper')
@@ -49,18 +38,16 @@ export class FullGame{
         form.classList.add('form')
         formWrapper.appendChild(form)
 
-        //GAME DESCRIPTION
-        let gameDescWrapper = document.createElement('div')
-        gameDescWrapper.classList.add('gameDescWrapper')
-        form.appendChild(gameDescWrapper)
+        //livesDisplay
+        let livesDisplayWrapper = document.createElement('div')
+        livesDisplayWrapper.classList.add('livesDisplayWrapper')
+        form.appendChild(livesDisplayWrapper)
 
-        let gameDesc = document.createElement('div')
-        gameDesc.classList.add('gameDesc')
-        gameDescWrapper.appendChild(gameDesc)
+        let livesDisplay = document.createElement('div')
+        livesDisplay.classList.add('livesDisplay')
+        livesDisplayWrapper.appendChild(livesDisplay)
 
-        gameDesc.innerHTML = "❤️ ❤️ ❤️ ❤️ ❤️ ❤️ "
-
-
+        livesDisplay.innerHTML = "❤️ ❤️ ❤️ ❤️ ❤️ ❤️ "
 
 
         //AVATAR
@@ -94,10 +81,10 @@ export class FullGame{
 
                     avatarForm.childNodes.forEach(e=>{
                         ev.target.classList.add('selected')
-                        if(e !== ev.target)
+                        if(e !== ev.target){
                             e.classList.remove('selected')
+                        }
                     })
-                    console.log(ev.target.innerHTML)
                     this.game.updateAvatar(ev.target.innerHTML)
                 }
             }
@@ -115,8 +102,6 @@ export class FullGame{
         label.classList.add('avatarLabel')
         selectForm.appendChild(label)
 
-        // let selectWrapper = document.createElement('div')
-        // selectWrapper.classList.add('selectWrapper')
 
 
         let select = document.createElement('select')
@@ -128,11 +113,9 @@ export class FullGame{
             op.textContent = options[index]
             select.appendChild(op)
         })
-        // selectWrapper.appendChild(select)
         selectForm.appendChild(select)
 
         select.onchange = (ev) =>{
-            console.log(ev.target.value)
             this.updateLegend(ev.target.value)
             this.game.updateLives(ev.target.value)
             this.game.updateDifficulty(ev.target.value)
@@ -152,22 +135,22 @@ export class FullGame{
 
 
         //SUBMIT BUTTON
-        let submitButtonWrapper = document.createElement('div')
-        submitButtonWrapper.classList.add('submitButtonWrapper')
-        form.appendChild(submitButtonWrapper)
+        let taskProgressWrapper = document.createElement('div')
+        taskProgressWrapper.classList.add('taskProgressWrapper')
+        form.appendChild(taskProgressWrapper)
 
-        let submitButton = document.createElement('button')
-        submitButton.classList.add('submitButton')
-        submitButtonWrapper.appendChild(submitButton);
+        let taskProgress = document.createElement('button')
+        taskProgress.classList.add('taskProgress')
+        taskProgressWrapper.appendChild(taskProgress);
 
-        submitButton.innerHTML = "..."
+        taskProgress.innerHTML = "..."
 
     }
 
     
 
     updateLegend(val){
-        let legend = this.cont.querySelector('.gameLegend')
+        let legend = this.gameContainer.querySelector('.gameLegend')
         legend.replaceChildren()
 
         let legendItem;
@@ -214,7 +197,7 @@ export class FullGame{
     drawLevels(){
         let levelsFormWrapper = document.createElement('div')
         levelsFormWrapper.classList.add('levelsFormWrapper')
-        this.fullDisplay.appendChild(levelsFormWrapper)
+        this.gameContainer.appendChild(levelsFormWrapper)
 
         let levelsForm = document.createElement('div')
         levelsForm.classList.add('levelsForm')
@@ -227,40 +210,5 @@ export class FullGame{
             level.classList.add('level')
             levelsForm.appendChild(level)
         }
-
-
-
     }
-
-
-
-
-
-
-    async fetchMatrix() {
-        const url = 'https://jobfair.nordeus.com/jf24-fullstack-challenge/test';
-    
-        try {
-            const response = await fetch(url);
-    
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-    
-            const text = await response.text();    
-    
-            const rows = text.trim().split('\n');
-            this.matrix = rows.map(row => 
-                row.split(' ').map(Number)
-            );
-            
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
-
-    }
-
-
-
-
 }
