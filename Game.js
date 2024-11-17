@@ -183,7 +183,7 @@ export class Game{
         this.islands.forEach(e=>{
             if(!this.correctIslands.includes(e[0].islandNumber)){
                 e.forEach(i=>{
-                    i.classList.add('flood1')
+                    i.classList.add('flood')
                 })
             }
         })
@@ -198,17 +198,17 @@ export class Game{
             this.host.parentNode.querySelector('.select1').disabled = false;
             this.host.parentNode.querySelector('.avatarForm').childNodes.forEach(e=> e.disabled = false)
             this.updateLevels(0)
-            this.updateWildDiv(0)
+            this.updatepopUpDiv(0)
         }else if(this.currentLives > 0 && this.currentLevel<12){//NEXT LEVEL
             this.updateLevels(0)
             this.currentLevel++
-            this.updateWildDiv(1, rightGuesses)
+            this.updatepopUpDiv(1, rightGuesses)
         }else{
             this.gameActive = false;
             this.host.parentNode.querySelector('.select1').disabled = false;
             this.host.parentNode.querySelector('.avatarForm').childNodes.forEach(e=> e.disabled = false)
             this.updateLevels(0)
-            this.updateWildDiv(2)
+            this.updatepopUpDiv(2)
         }
     }  
 
@@ -227,8 +227,8 @@ export class Game{
 
         let taskProgress = this.host.parentNode.querySelector('.taskProgress')
         taskProgress.innerHTML = 'Use spacebar to lay first egg!'
-        let wildDiv = this.host.querySelector('.wildDiv')
-        wildDiv.style.display = 'none'
+        let popUpDiv = this.host.querySelector('.popUpDiv')
+        popUpDiv.style.display = 'none'
 
         this.cont.replaceChildren()
 
@@ -255,27 +255,27 @@ export class Game{
         matrixWrapper.classList.add('matrixWrapper')
         this.host.appendChild(matrixWrapper)
         
-        let wildDiv = document.createElement('div')
-        wildDiv.classList.add('wildDiv')
-        matrixWrapper.appendChild(wildDiv)
+        let popUpDiv = document.createElement('div')
+        popUpDiv.classList.add('popUpDiv')
+        matrixWrapper.appendChild(popUpDiv)
         
-        let wildDivText = document.createElement('div')
-        wildDivText.classList.add('wildDivText')
-        wildDivText.innerHTML = "LEVEL DONE"
-        wildDiv.appendChild(wildDivText)
+        let popUpDivText = document.createElement('div')
+        popUpDivText.classList.add('popUpDivText')
+        popUpDivText.innerHTML = "LEVEL DONE"
+        popUpDiv.appendChild(popUpDivText)
         
-        let wildDivText2 = document.createElement('div')
-        wildDivText2.classList.add('wildDivText2')
-        wildDivText2.innerHTML = "x out of 3 eggs survived!"
-        wildDiv.appendChild(wildDivText2)
+        let popUpDivText2 = document.createElement('div')
+        popUpDivText2.classList.add('popUpDivText2')
+        popUpDivText2.innerHTML = "x out of 3 eggs survived!"
+        popUpDiv.appendChild(popUpDivText2)
         
-        let wildDivButton = document.createElement('button')
-        wildDivButton.classList.add('wildDivButton')
-        wildDivButton.innerHTML = "next level"
-        wildDiv.appendChild(wildDivButton)
+        let popUpDivButton = document.createElement('button')
+        popUpDivButton.classList.add('popUpDivButton')
+        popUpDivButton.innerHTML = "next level"
+        popUpDiv.appendChild(popUpDivButton)
         
         self = this;
-        wildDivButton.onclick = (ev) =>{
+        popUpDivButton.onclick = (ev) =>{
 
             this.music.loop = true;
             this.music.play()
@@ -295,7 +295,7 @@ export class Game{
 
         }
         
-        this.updateWildDiv(-1)
+        this.updatepopUpDiv(-1)
 
         this.cont = document.createElement('div') 
         this.cont.classList.add('matrix'); 
@@ -355,7 +355,7 @@ export class Game{
 
     createCell(i, j){
         const cell = document.createElement('div');
-        cell.classList.add('cell', 'tet');
+        cell.classList.add('cell', 'darken');
         cell.i = i;
         cell.j = j;
         cell.water = this.matrix[i][j] === 0;
@@ -371,7 +371,7 @@ export class Game{
         cell.height = this.matrix[i][j];
     
         const span = document.createElement('span');
-        span.classList.add('span1', 'spa');
+        span.classList.add('span1', 'flip-horizontal');
         cell.appendChild(span);
     
         if (i === 0 && j === 0) {
@@ -383,13 +383,13 @@ export class Game{
 
     lift(val){
         this.islands[val].forEach(e=>{
-            e.classList.remove('tet')
+            e.classList.remove('darken')
         })
     }
 
     lower(val){
         this.islands[val].forEach(e=>{
-            e.classList.add('tet')
+            e.classList.add('darken')
         })
     }
 
@@ -552,67 +552,67 @@ export class Game{
 
 //UPDATERS
 
-    updateWildDiv(val, rightGuesses){
-        let wildDiv = this.host.querySelector('.wildDiv')
-        let wildDivText = this.host.querySelector('.wildDivText')
-        let wildDivText2 = this.host.querySelector('.wildDivText2')
-        let wildButton = this.host.querySelector('.wildDivButton')
+    updatepopUpDiv(val, rightGuesses){
+        let popUpDiv = this.host.querySelector('.popUpDiv')
+        let popUpDivText = this.host.querySelector('.popUpDivText')
+        let popUpDivText2 = this.host.querySelector('.popUpDivText2')
+        let wildButton = this.host.querySelector('.popUpDivButton')
         
-        wildDiv.style.display='flex'
+        popUpDiv.style.display='flex'
         if(val == -1){//STARTING SCREEN
-            wildDiv.style.backgroundColor='#d9d29c'
-            wildDiv.style.border='4px solid rgb(57, 28, 28)'
-            wildDivText.innerHTML = "The Duck Game"
-            wildDiv.style.borderRadius = '8px'
+            popUpDiv.style.backgroundColor='#d9d29c'
+            popUpDiv.style.border='4px solid rgb(57, 28, 28)'
+            popUpDivText.innerHTML = "The Duck Game"
+            popUpDiv.style.borderRadius = '8px'
 
 
             wildButton.style.backgroundColor='#ab8e71'
-            wildDivText2.style.display = 'none'
+            popUpDivText2.style.display = 'none'
             wildButton.innerHTML = 'Start'
             wildButton.style.borderRadius = '5px'
             wildButton.style.marginTop = '4%'
         }
         else if(val == 0){//GAME OVER
-            wildDiv.style.backgroundColor='red'
-            wildDiv.style.border='4px solid rgb(57, 28, 28)'
-            wildDivText.innerHTML = "GAME OVER"
-            wildDiv.style.borderRadius = '8px'
+            popUpDiv.style.backgroundColor='red'
+            popUpDiv.style.border='4px solid rgb(57, 28, 28)'
+            popUpDivText.innerHTML = "GAME OVER"
+            popUpDiv.style.borderRadius = '8px'
 
 
             wildButton.style.backgroundColor='#c00000'
-            wildDivText2.style.display = 'none'
+            popUpDivText2.style.display = 'none'
             wildButton.style.borderRadius = '5px'
             wildButton.innerHTML = 'Play Again'
             wildButton.style.marginTop = '4%'
         }else if (val == 1){//LEVEL COMPLETION
-            wildDiv.style.backgroundColor='#ebe581'
-            wildDiv.style.border='4px solid rgb(0, 0, 0)'
-            wildDivText.innerHTML = "Level completed"
-            wildDiv.style.borderRadius = '8px'
+            popUpDiv.style.backgroundColor='#ebe581'
+            popUpDiv.style.border='4px solid rgb(0, 0, 0)'
+            popUpDivText.innerHTML = "Level completed"
+            popUpDiv.style.borderRadius = '8px'
 
             let str = ''
             for(let i = 0; i < 3; i++){
                 i < rightGuesses ? str+='🐣' : str+='🍗'
             }
 
-            wildDivText2.innerHTML = `${rightGuesses} out of 3 eggs have survived ` + str
+            popUpDivText2.innerHTML = `${rightGuesses} out of 3 eggs have survived ` + str
             wildButton.style.backgroundColor='#e3d249'
-            wildDivText2.style.display = 'flex'
+            popUpDivText2.style.display = 'flex'
             wildButton.innerHTML = 'next level'
             wildButton.style.borderRadius = '5px'
             wildButton.style.marginTop = '2%'
 
         }
         else if (val == 2){//GAME COMPLETION
-            wildDiv.style.backgroundColor='#85c057'
-            wildDiv.style.border='4px solid rgb(0, 0, 0)'
-            wildDivText.innerHTML = "Great work!"
-            wildDiv.style.borderRadius = '8px'
+            popUpDiv.style.backgroundColor='#85c057'
+            popUpDiv.style.border='4px solid rgb(0, 0, 0)'
+            popUpDivText.innerHTML = "Great work!"
+            popUpDiv.style.borderRadius = '8px'
 
-            wildDivText2.style.marginTop = '2%'
-            wildDivText2.innerHTML = `You have finished the game :)`
+            popUpDivText2.style.marginTop = '2%'
+            popUpDivText2.innerHTML = `You have finished the game :)`
             wildButton.style.backgroundColor='#ffffff'
-            wildDivText2.style.display = 'flex'
+            popUpDivText2.style.display = 'flex'
             wildButton.innerHTML = 'Replay'
             wildButton.style.borderRadius = '5px'
             wildButton.style.marginTop = '2%'
@@ -626,18 +626,18 @@ export class Game{
 
         //Changes the direction in which duck is looking
         if(val[1] == 1){
-            targetCell.childNodes[0].classList.add('spa')
+            targetCell.childNodes[0].classList.add('flip-horizontal')
             this.duckInfo.currentDirection = 1;
         }
         else if(val[1] == -1){
-            targetCell.childNodes[0].classList.remove('spa')
+            targetCell.childNodes[0].classList.remove('flip-horizontal')
             this.duckInfo.currentDirection = -1;
         }
         if(val[0] != 0){
             if(this.duckInfo.currentDirection == 1)
-                targetCell.childNodes[0].classList.add('spa')
+                targetCell.childNodes[0].classList.add('flip-horizontal')
             else
-            targetCell.childNodes[0].classList.remove('spa')
+            targetCell.childNodes[0].classList.remove('flip-horizontal')
         }
     }
 

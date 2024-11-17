@@ -6,8 +6,8 @@ body{
    /* --main-border: rgb(36, 33, 27); */
    --main-border: rgb(108 100 83);
 }
-.canva{
-}
+
+/* Game display */
 
 .matrixWrapper{
   width: 100%;
@@ -15,7 +15,57 @@ body{
   position: relative;
 }
 
-.wildDiv{
+.matrix {
+  position: relative;
+
+  border-top: 15px solid var(--main-border);
+  border-right: 15px solid var(--main-border);
+  border-bottom: 15px solid var(--main-border);
+
+  display: grid;
+  box-sizing: border-box;
+  background-color: blue;
+  grid-template-columns: repeat(30, 1fr);
+  grid-template-rows: repeat(30, 1fr); 
+  width: 100%;
+  height: 100%; 
+  /* max-width: 50vw;  */
+  gap:0;
+  aspect-ratio: 1;
+  min-width: 650px;
+  max-height: 900px;
+}
+
+.cell {
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 17px;
+  box-sizing: border-box;
+  width: 100%; 
+  height: 100%; 
+  opacity: 1;
+  transition: opacity 3s;
+}
+.cell span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+.flood{
+  opacity: 0;
+  border: none;
+}
+
+.darken{
+  filter: brightness(0.7) !important;
+}
+
+.flip-horizontal{
+  transform: scaleX(-1);
+}
+.popUpDiv{
   top:40%;
   left: 25%;
   width: 50%;
@@ -33,23 +83,23 @@ body{
   align-items: center;
 
 }
-.wildDiv.pop{
+.popUpDiv.pop{
   opacity: 0.8;
 }
 
-.wildDivText{
+.popUpDivText{
   font-weight: 600;
   font-size: 2rem;
   margin-top: 5%;
   align-self: center;
 }
-.wildDivText2{
+.popUpDivText2{
   font-family:'Trebuchet MS', sans-serif;
   align-self: center;
   font-size: 1rem;
 }
 
-.wildDivButton{
+.popUpDivButton{
   font-weight: 500;
   font-size: 1.3em;
   margin-top: 2%;
@@ -59,71 +109,12 @@ body{
   align-self: center;
   transition: transform 2ms ease-in;
 }
-.wildDivButton:hover{
+.popUpDivButton:hover{
   transform: scale(1.05);
   box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, .5);
   cursor: pointer;
 
 }
-
-.matrix {
-  position: relative;
-
-  border-top: 15px solid var(--main-border);
-  border-right: 15px solid var(--main-border);
-  border-bottom: 15px solid var(--main-border);
-
-  display: grid;
-  box-sizing: border-box;
-  background-color: blue;
-  /* background-color: black; */
-  grid-template-columns: repeat(30, 1fr);
-  grid-template-rows: repeat(30, 1fr); 
-  width: 100%;
-  height: 100%; 
-  /* max-width: 50vw;  */
-  gap:0;
-  aspect-ratio: 1;
-  min-width: 650px;
-  max-height: 900px;
-}
-
-.cell {
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-
-  overflow: hidden;
-  font-size: 17px;
-  box-sizing: border-box;
-  width: 100%; 
-  height: 100%; 
-  opacity: 1;
-  transition: opacity 3s;
-}
-.cell span {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-.flood1{
-  opacity: 0;
-  border: none;
-}
-
-.tet{
-
-  filter: brightness(0.7) !important;
-}
-
-
-
-
-.spa{
-  transform: scaleX(-1);
-}
-
-
 
 
 
@@ -275,12 +266,10 @@ body{
 
 .levelsWrapper{
   border-top: 15px solid var(--main-border);
-
   margin-top: auto;
   display: flex;
   flex-direction: column;
   padding: 10%;
-
 }
 .levelLabel{
   color: white;
