@@ -114,16 +114,8 @@ export class Game{
                 
                 this.islands[this.cells[x][y].islandNumber][0].setAttribute('hasEgg', 'true');
                 
-                // if(!this.moveDuck([0, this.duckInfo.currentDirection]))
-                //     if(!this.moveDuck([0, -this.duckInfo.currentDirection]))
-                //         if(!this.moveDuck([-1,0]))
-                //             this.moveDuck([1,0])
-
                 if(!this.moveDuck([0, this.duckInfo.currentDirection]) && !this.moveDuck([0, -this.duckInfo.currentDirection]) && !this.moveDuck([-1,0]))
                     this.moveDuck([1,0])
-
-
-
                 
                 this.cells[x][y].childNodes[0].innerHTML='🥚'
                 this.quack.play()
