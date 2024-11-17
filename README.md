@@ -1,4 +1,4 @@
-DESC:
+###Game description
 After loading the page, you can start by selecting the avatar you want to play as. 
 Next, choose the difficulty level. Higher difficulty reduces the number of colors and lives, making it harder to estimate the height of each cell and increasing the game's challenge.
 Below the difficulty options, you'll find a legend that maps each color to a height range, helping you interpret the map.
