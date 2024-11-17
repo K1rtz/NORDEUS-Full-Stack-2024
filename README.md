@@ -10,3 +10,15 @@ all levels (victory) or losing all lives before completing the final level (defe
 The character is controlled with the ARROW KEYS, and eggs are placed using the SPACEBAR.
 
 ![StartScreen](https://github.com/user-attachments/assets/b8cecbbb-0e17-49c3-a6d8-81b08f7c43a3)
+
+
+![Gameplay](https://github.com/user-attachments/assets/67e8606d-e69d-4e78-9735-9970323fd6da)
+
+
+![NextLevel](https://github.com/user-attachments/assets/f5121aec-268e-460c-9b46-2dc1fac83709)
+
+
+![GameOver](https://github.com/user-attachments/assets/2eb77883-e7a5-4952-afb2-1815b94d5a26)
+
+
+![Victory](https://github.com/user-attachments/assets/929c50f6-5b3f-4a5c-a082-14ca9d225bcc)
